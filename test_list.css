@@ -1,0 +1,21 @@
+table {
+    /* TODO make text bold? Change font to something nicer. */
+}
+
+.native {
+    color: orange;
+}
+
+.fluent {
+    background: cyan;
+    color: black;
+}
+
+.intermediate {
+    background: limegreen;
+    /*color: limegreen;*/
+}
+
+.beginner {
+    background: red;
+}
