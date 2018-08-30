@@ -25,17 +25,18 @@ td {
 }
 
 .fluent {
-    background: cyan;
+    background: #00ffff;
     color: black;
 }
 
 .intermediate {
-    background: limegreen;
-    /*color: limegreen;*/
+    background: #ffff00;
+    color: black;
 }
 
 .beginner {
-    background: red;
+    background: #ff0000;
+    color: #ffffff;
 }
 
 .language {
