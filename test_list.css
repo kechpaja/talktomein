@@ -1,3 +1,11 @@
+body {
+    font-size: 30px;
+    font-family: "Trebuchet MS", Times, serif;
+
+    max-width: 500px;
+    margin: auto;
+}
+
 table {
     /* TODO make text bold? Change font to something nicer. */
 
@@ -6,13 +14,15 @@ table {
     margin-right: -50%;
     transform: translate(-50%, 0);*/
 
-    max-width: 500px;
-    margin: auto;
+    /*max-width: 500px;
+    margin: auto;*/
 
     border-collapse: collapse;
 
-    font-size: 30px;
-    font-family: "Trebuchet MS", Times, serif;
+    font-size: inherit;
+
+    /*font-size: 30px;
+    font-family: "Trebuchet MS", Times, serif;*/
 }
 
 td {
