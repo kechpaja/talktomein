@@ -43,3 +43,7 @@ td {
     padding-right: 1em;
     width: 100%;
 }
+
+.border {
+    border-bottom: 0.2em solid white;
+}
