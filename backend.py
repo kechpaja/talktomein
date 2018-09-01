@@ -1,13 +1,9 @@
 import falcon
-
-def filterquery(query, level):
-    return [x for x in query if x[2] == level]
+import MySQLdb
 
 def mkrow(lang):
     acc = "<tr class=\"" + lang[2] + "\"><td class=\"left-column\">"
-    if lang[2] == "N":
-        # TODO update condition?
-        acc += "&bigstar;"
+    acc += "&bigstar;" if lang[2] == "N" else ""
     acc += "</td><td class=\"language\">" + lang[1] + "</td></tr>"
     return acc
 
@@ -27,7 +23,7 @@ def genpage(user, query):
     # TODO make more Pythonic?
     blocks = []
     for level in ["N", "C", "B", "A"]:
-        blocks.append("\n".join([mkrow(l) for l in filterquery(query, level)]))
+        blocks.append("\n".join([mkrow(l) for l in query if l[2] == level]))
     acc += "\n\n<tr class=\"border\"></td></td><td></td></tr>\n\n".join(blocks)
 
     acc += '''
@@ -74,6 +70,12 @@ class LanguageListResource(object):
 # Start everything up
 ####
 
-app = falcon.API()
+# Set up database connection
+db = MySQLdb.connect(host="nyelv.db",
+                     db="nyelv",
+                     read_default_file="~/.nyelv-db.conf",
+                     charset="utf8")
 
-app.add_route("/ei/{user}", LanguageListResource())
+# Start Falcon
+app = falcon.API()
+app.add_route("/ei/{user}", LanguageListResource(db))

@@ -21,3 +21,9 @@ nearlyfreespeech-nyelv.db-nyelv in encrypted file.
 "Level" in whospeakswhat table currently holds A, B, C or N. In the future, we
 may add additional categories, but they probably won't be more than a couple of
 characters long. 
+
+
+
+Connecting from Python:
+
+Install MySQLdb (pip install mysqlclient)
