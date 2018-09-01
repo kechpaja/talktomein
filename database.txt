@@ -27,3 +27,11 @@ characters long.
 Connecting from Python:
 
 Install MySQLdb (pip install mysqlclient)
+
+
+
+Stuff:
+
+/home/protected/nyelv is the Python virtual env
+/home/private/.nyelv-db.conf holds username and password
+/home/public/nyelv/styles.css is CSS and any static pages

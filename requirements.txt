@@ -1,0 +1,8 @@
+falcon==1.4.1
+gdbm==0.0.0
+gunicorn==19.9.0
+mysqlclient==1.3.13
+python-mimeparse==1.6.0
+six==1.11.0
+sqlite3==0.0.0
+Tkinter==0.0.0
