@@ -45,7 +45,6 @@ def genpage(user, query):
 class LanguageListResource(object):
     def __init__(self, connection):
         self.connection = connection
-        self.cursor = self.connection.cursor() 
 
     def on_get(self, req, resp, user):
         sql = '''select
@@ -55,8 +54,9 @@ class LanguageListResource(object):
                 from languages join whospeakswhat 
                     on whospeakswhat.language = languages.id
                 where (whospeakswhat.user = %s)'''
-        self.cursor.execute(sql, (user, ))
-        resp.body = genpage(user, self.cursor.fetchall()) # TODO dangerous?
+        cursor = self.connection.cursor()
+        cursor.execute(sql, (user, ))
+        resp.body = genpage(user, cursor.fetchall()) # TODO dangerous?
 
         resp.content_type = "text/html; charset=utf-8"
         resp.status = falcon.HTTP_200
