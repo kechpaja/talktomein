@@ -23,8 +23,8 @@ def fetchlangs(cnxn):
 
 # Page generation helper functions
 def mkrow(lang):
-    acc = "<tr class=\"" + lang[2] + "\">"
-    acc += "<td class=\"left-column\">" +("&bigstar;" if lang[2] == "N" else "")
+    acc = "<tr id=\"" + lang[0] + "\" class=\"" + lang[2] + "\">"
+    acc += "<td class=\"left-column\">"+("&bigstar;" if lang[2] == "N" else "")
     acc += "</td><td class=\"language\">" + lang[1] + "</td></tr>"
     return acc
 
@@ -37,15 +37,6 @@ def genpage(user, cnxn, title, scripts=False):
     acc += '''
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="../css/styles.css">
-'''
-
-    if scripts:
-        langs = fetchlangs(cnxn)
-        acc += "        <script>\n            var languages = {"
-        acc += ",".join(['"' + l[0] + '":"' + l[1] + '"' for l in langs])
-        acc += "};\n        </script>\n"
-        acc += '''
-        <script type="text/javascript" src="../js/scripts.js"></script>
 '''
 
     acc += '''
@@ -66,12 +57,22 @@ def genpage(user, cnxn, title, scripts=False):
     acc += '''
         </table>
 
-        <p>
+        <p id="key">
         Key: <span class="C">fluent</span>, <span class="B">intermediate</span>,
         <span class="A">beginner</span>. Native languages are starred 
         (<span class="left-column">&bigstar;</span>).
         </p>
+'''
+    if scripts:
+        langs = fetchlangs(cnxn)
+        acc += "        <script>\n            var languages = {"
+        acc += ",".join(['"' + l[0] + '":"' + l[1] + '"' for l in langs])
+        acc += "};\n        var user = \"" + user + "\";\n        </script>\n"
+        acc += '''
+        <script type="text/javascript" src="../js/scripts.js"></script>
+'''
 
+    acc += '''
     </body>
 </html>
 '''
@@ -98,20 +99,20 @@ class UpdateListResource(object):
 
     def on_post(self, req, resp, user):
         data = json.loads(req.stream.read().decode("utf-8"))
-        languages = [[]]
-        for language in data.keys():
-            languages.append([user, language, data[language]])
+        #languages = [[]]
+        #for language in data.keys():
+        #    languages.append([user, language, data[language]])
 
-        cnxn = dbconnect()
-        cursor = cnxn.cursor()
+        #cnxn = dbconnect()
+        #cursor = cnxn.cursor()
 
-        cursor.execute("delete from whospeakswhat where user = %s", (user,))
-        if len(languages) > 0:
-            sql = "insert into whospeakswhat values "
-            sql += ",".join(["(%s,%s,%s)"]*len(languages))
-            cursor.execute(sql, tuple(sum(languages, [])))
+        #cursor.execute("delete from whospeakswhat where user = %s", (user,))
+        #if len(languages) > 0:
+        #    sql = "insert into whospeakswhat values "
+        #    sql += ",".join(["(%s,%s,%s)"]*len(languages))
+        #    cursor.execute(sql, tuple(sum(languages, [])))
 
-        cnxn.commit()
+        #cnxn.commit()
 
         # TODO response body? 
         resp.status = falcon.HTTP_200
@@ -126,3 +127,4 @@ class UpdateListResource(object):
 # Start Falcon
 app = falcon.API()
 app.add_route("/ei/{user}", LanguageListResource())
+app.add_route("/update/{user}", UpdateListResource())
