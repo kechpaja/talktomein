@@ -1,7 +1,9 @@
 import falcon
+import json
 import MySQLdb
 
-def fetchlangs(user, cnxn):
+# Database helper functions
+def fetchuserlangs(user, cnxn):
     sql = '''select
                 languages.id,
                 languages.name,
@@ -14,21 +16,39 @@ def fetchlangs(user, cnxn):
     cursor.execute(sql, (user,))
     return cursor.fetchall()
 
+def fetchlangs(cnxn):
+    cursor = cnxn.cursor()
+    cursor.execute("select * from languages")
+    return cursor.fetchall()
+
+# Page generation helper functions
 def mkrow(lang):
-    acc = "<tr class=\"" + lang[2] + "\"><td class=\"left-column\">"
-    acc += "&bigstar;" if lang[2] == "N" else ""
+    acc = "<tr class=\"" + lang[2] + "\">"
+    acc += "<td class=\"left-column\">" +("&bigstar;" if lang[2] == "N" else "")
     acc += "</td><td class=\"language\">" + lang[1] + "</td></tr>"
     return acc
 
-def genpage(user, cnxn):
-    query = fetchlangs(user, cnxn)
+def genpage(user, cnxn, title, scripts=False):
+    query = fetchuserlangs(user, cnxn)
 
     # Expect query to be a list of lists or tuples containing the
     # language code, language, and level
-    acc = "<html>\n    <head>\n        <title>" + user + " speaks:</title>"
+    acc = "<html>\n    <head>\n        <title>" + title + "</title>"
     acc += '''
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="../css/styles.css">
+'''
+
+    if scripts:
+        langs = fetchlangs(cnxn)
+        acc += "        <script>\n            var languages = {"
+        acc += ",".join(['"' + l[0] + '":"' + l[1] + '"' for l in langs])
+        acc += "};\n        </script>\n"
+        acc += '''
+        <script type="text/javascript" src="../js/scripts.js"></script>
+'''
+
+    acc += '''
     </head>
 
     <body>
@@ -66,10 +86,42 @@ def dbconnect():
 
 class LanguageListResource(object):
     def on_get(self, req, resp, user):
-        resp.body = genpage(user, dbconnect())
+        resp.body = genpage(user, dbconnect(), user + " speaks:")
         resp.content_type = "text/html; charset=utf-8"
         resp.status = falcon.HTTP_200
 
+class UpdateListResource(object):
+    def on_get(self, req, resp, user):
+        resp.body = genpage(user, dbconnect(), "Edit language list", True)
+        resp.content_type = "text/html; charset=utf-8"
+        resp.status = falcon.HTTP_200
+
+    def on_post(self, req, resp, user):
+        data = json.loads(req.stream.read().decode("utf-8"))
+        languages = [[]]
+        for language in data.keys():
+            languages.append([user, language, data[language]])
+
+        cnxn = dbconnect()
+        cursor = cnxn.cursor()
+
+        cursor.execute("delete from whospeakswhat where user = %s", (user,))
+        if len(languages) > 0:
+            sql = "insert into whospeakswhat values "
+            sql += ",".join(["(%s,%s,%s)"]*len(languages))
+            cursor.execute(sql, tuple(sum(languages, [])))
+
+        cnxn.commit()
+
+        # TODO response body? 
+        resp.status = falcon.HTTP_200
+
+# TODO think about how to work authentication into update mechanism
+# Probably just going to send the user a token, which will be verified when
+# the GET request for the update page is processed. A session cookie will then
+# be added? 
+# Or maybe just require the token sent to user when save is posted. Can access
+# update page for any user, but can't save without auth? 
 
 # Start Falcon
 app = falcon.API()
