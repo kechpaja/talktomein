@@ -52,7 +52,7 @@ def genpage(user, cnxn, title, scripts=False):
         blocks.append("\n".join([mkrow(l) for l in query if l[2] == level]))
     blocks = [blocks[0] + blocks[1], blocks[2], blocks[3]]
     blocks = [b for b in blocks if len(b) > 0]
-    acc += "\n\n<tr class=\"border\"><td></td><td></td></tr>\n\n".join(blocks)
+    acc += "\n<tr class=\"border\"><td colspan=\"3\"></td></tr>\n".join(blocks)
 
     acc += '''
         </table>
