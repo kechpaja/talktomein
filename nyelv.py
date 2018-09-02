@@ -1,13 +1,28 @@
 import falcon
 import MySQLdb
 
+def fetchlangs(user, cnxn):
+    sql = '''select
+                languages.id,
+                languages.name,
+                whospeakswhat.level
+            from languages join whospeakswhat 
+                on whospeakswhat.language = languages.id
+            where (whospeakswhat.user = %s)'''
+
+    cursor = cnxn.cursor()
+    cursor.execute(sql, (user,))
+    return cursor.fetchall()
+
 def mkrow(lang):
     acc = "<tr class=\"" + lang[2] + "\"><td class=\"left-column\">"
     acc += "&bigstar;" if lang[2] == "N" else ""
     acc += "</td><td class=\"language\">" + lang[1] + "</td></tr>"
     return acc
 
-def genpage(user, query):
+def genpage(user, cnxn):
+    query = fetchlangs(user, cnxn)
+
     # Expect query to be a list of lists or tuples containing the
     # language code, language, and level
     acc = "<html>\n    <head>\n        <title>" + user + " speaks:</title>"
@@ -42,36 +57,20 @@ def genpage(user, query):
 '''
     return acc
 
+def dbconnect():
+    return MySQLdb.connect(host="nyelv.db",
+                           db="nyelv",
+                           user="nyelv",
+                           read_default_file="/home/protected/.nyelv-db.conf",
+                           charset="utf8")
+
 class LanguageListResource(object):
-    def __init__(self, connection):
-        self.connection = connection
-
     def on_get(self, req, resp, user):
-        sql = '''select
-                    languages.id,
-                    languages.name,
-                    whospeakswhat.level
-                from languages join whospeakswhat 
-                    on whospeakswhat.language = languages.id
-                where (whospeakswhat.user = %s)'''
-        cursor = self.connection.cursor()
-        cursor.execute(sql, (user, ))
-        resp.body = genpage(user, cursor.fetchall()) # TODO dangerous?
-
+        resp.body = genpage(user, dbconnect())
         resp.content_type = "text/html; charset=utf-8"
         resp.status = falcon.HTTP_200
 
-####
-# Start everything up
-####
-
-# Set up database connection
-db = MySQLdb.connect(host="nyelv.db",
-                     db="nyelv",
-                     user="nyelv",
-                     read_default_file="/home/protected/.nyelv-db.conf",
-                     charset="utf8")
 
 # Start Falcon
 app = falcon.API()
-app.add_route("/ei/{user}", LanguageListResource(db))
+app.add_route("/ei/{user}", LanguageListResource())
