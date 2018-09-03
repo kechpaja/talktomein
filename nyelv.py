@@ -99,20 +99,21 @@ class UpdateListResource(object):
 
     def on_post(self, req, resp, user):
         data = json.loads(req.stream.read().decode("utf-8"))
-        #languages = [[]]
-        #for language in data.keys():
-        #    languages.append([user, language, data[language]])
+        languages = []
+        for language in data.keys():
+            languages.append([user, language, data[language]])
 
-        #cnxn = dbconnect()
-        #cursor = cnxn.cursor()
+        cnxn = dbconnect()
+        cursor = cnxn.cursor()
 
-        #cursor.execute("delete from whospeakswhat where user = %s", (user,))
-        #if len(languages) > 0:
-        #    sql = "insert into whospeakswhat values "
-        #    sql += ",".join(["(%s,%s,%s)"]*len(languages))
-        #    cursor.execute(sql, tuple(sum(languages, [])))
+        cursor.execute("delete from whospeakswhat where user = %s", (user,))
+        if len(languages) > 0:
+            sql = "insert into whospeakswhat values "
+            sql += ",".join(["(%s,%s,%s)"]*len(languages))
+            cursor.execute(sql, tuple(sum(languages, [])))
 
-        #cnxn.commit()
+        cnxn.commit()
+        cnxn.close()
 
         # TODO response body? 
         resp.status = falcon.HTTP_200
