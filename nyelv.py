@@ -33,18 +33,10 @@ def genpage(user, cnxn, title, scripts=False):
 
     # Expect query to be a list of lists or tuples containing the
     # language code, language, and level
-    acc = "<html>\n    <head>\n        <title>" + title + "</title>"
-    acc += '''
+    acc = "<html>\<head><title>" + title + '''</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="../css/styles.css">
-'''
-
-    acc += '''
-    </head>
-
-    <body>
-        <table>
-'''
+        </head><body><table>'''
 
     # TODO make more Pythonic?
     blocks = []
@@ -54,29 +46,17 @@ def genpage(user, cnxn, title, scripts=False):
     blocks = [b for b in blocks if len(b) > 0]
     acc += "\n<tr class=\"border\"><td colspan=\"3\"></td></tr>\n".join(blocks)
 
-    acc += '''
-        </table>
-
-        <p id="key">
-        Key: <span class="C">fluent</span>, <span class="B">intermediate</span>,
-        <span class="A">beginner</span>. Native languages are starred 
-        (<span class="left-column">&bigstar;</span>).
-        </p>
-'''
+    acc += '''</table><p id="key"> Key: <span class="C">fluent</span>, 
+        <span class="B">intermediate</span>,<span class="A">beginner</span>.
+        Native languages are starred 
+        (<span class="left-column">&bigstar;</span>).</p>'''
     if scripts:
-        langs = fetchlangs(cnxn)
-        acc += "        <script>\n            var languages = {"
-        acc += ",".join(['"' + l[0] + '":"' + l[1] + '"' for l in langs])
-        acc += "};\n        var user = \"" + user + "\";\n        </script>\n"
-        acc += '''
-        <script type="text/javascript" src="../js/scripts.js"></script>
-'''
+        acc += "<script>var languages = {"
+        acc += ",".join(['"%s":"%s"' % t for t in fetchlangs(cnxn)])
+        acc += "};var user = \"" + user + '''";</script>
+            <script type="text/javascript" src="../js/scripts.js"></script>'''
 
-    acc += '''
-    </body>
-</html>
-'''
-    return acc
+    return acc + "</body></html>"
 
 def dbconnect():
     return MySQLdb.connect(host="nyelv.db",
@@ -99,9 +79,7 @@ class UpdateListResource(object):
 
     def on_post(self, req, resp, user):
         data = json.loads(req.stream.read().decode("utf-8"))
-        languages = []
-        for language in data.keys():
-            languages.append([user, language, data[language]])
+        languages = [[user, lang, data[lang]] for lang in data.keys()]
 
         cnxn = dbconnect()
         cursor = cnxn.cursor()
