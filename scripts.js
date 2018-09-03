@@ -52,18 +52,8 @@
         }
 
         var field = document.createElement("td");
-   //     field.innerHTML = "<input type='text' id='add" + level + "'></input>";
 
-//        document.getElementById("add" + level).addEventListener(
- //           "keypress",
-  //          function (e, msg) {
-   //             if (e.keyCode == 13) {
-    //                // TODO 
-     //           }
-      //  });
 
-        // TODO wait on text field/autocomplete; just do selection list
-        //
         var ddl = "<select id='add" + level + "'>";
         Object.keys(languages).forEach(function (l) {
             ddl += "<option value='" + l + "'>" + languages[l] + "</option>";
@@ -75,14 +65,6 @@
         row.appendChild(star);
         row.appendChild(field);
 
-       // var els = document.getElementsByClassName(level);
-        
-        //var table = document.getElementsByClassName("border")[0].parentElement;
-        //if (nextElement) {
-       //     table.insertBefore(row, nextElement);
-       // } else {
-       //     table.appendChild(row);
-       // }
         return row;
     }
 
@@ -121,20 +103,7 @@
     // N Languages
     table.insertBefore(createAddLanguageField("N"), 
                        table.getElementsByClassName("C")[0]);
-    
 
-
-
-    //var c = document.getElementsByClassName("C");
-
-    //createAddLanguageField("N", document.getElementsByClassName("C")[0]);
-    //createAddLanguageField("C", document.getElementsByClassName("border")[0]);
-    //createAddLanguageField("B", document.getElementsByClassName("border")[1]);
-    //createAddLanguageField("A", document.getElementsByClassName("border")[2]);
-
-   // ["N", "C", "B", "A"].forEach(function (level) {
-   //     createAddLanguageField(level);
-   // });
 
     // Add password field
     //var passwordField = document.createElement("div");
@@ -166,8 +135,4 @@
     };
 
     document.body.appendChild(saveButton);
-
-    // TODO stuff for flipping through list of languages and selecting one to add
-
-
 })();
