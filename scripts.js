@@ -33,7 +33,7 @@
             langtr.className = level;
 
             var inner = "<td class='left-column'>";
-            if (level == "N") {
+            if (level === "N") {
                 inner += "&bigstar;";
             }
             inner += "</td><td class='language'>"+languages[lang]+"</td></tr>";
@@ -44,6 +44,12 @@
             
             // TODO remove selected language from selector?
         };
+
+        var star = document.createElement("td");
+        star.className = "left-column";
+        if (level === "N") {
+            star.innerHTML = "&bigstar;";
+        }
 
         var field = document.createElement("td");
    //     field.innerHTML = "<input type='text' id='add" + level + "'></input>";
@@ -66,23 +72,65 @@
         field.innerHTML = ddl;
 
         row.appendChild(button);
-        row.appendChild(document.createElement("td"));
+        row.appendChild(star);
         row.appendChild(field);
 
-        //var els = document.getElementsByClassName(level);
+       // var els = document.getElementsByClassName(level);
         
-        var table = document.getElementsByClassName("border")[0].parentElement;
-        if (nextElement) {
-            table.insertBefore(row, nextElement);
-        } else {
-            table.appendChild(row);
-        }
+        //var table = document.getElementsByClassName("border")[0].parentElement;
+        //if (nextElement) {
+       //     table.insertBefore(row, nextElement);
+       // } else {
+       //     table.appendChild(row);
+       // }
+        return row;
     }
 
-    createAddLanguageField("N", document.getElementsByClassName("C")[0]);
-    createAddLanguageField("C", document.getElementsByClassName("border")[0]);
-    createAddLanguageField("B", document.getElementsByClassName("border")[1]);
-    createAddLanguageField("A", document.getElementsByClassName("border")[2]);
+    var table = document.getElementsByTagName("tbody")[0];
+
+    if (!table) {
+        table = document.getElementsByTagName("table")[0];
+    }
+
+    table.appendChild(createAddLanguageField("A"));
+
+    // B Languages
+    var bRows = table.getElementsByClassName("B");
+    if (bRows.length <= 0) {
+        var border = document.createElement("tr");
+        border.className = "border";
+        border.innerHTML = "<td colspan='3'></td>";
+        table.insertBefore(border, table.getElementsByClassName("A")[0]);
+    }
+    
+    var borders = document.getElementsByClassName("border");
+    table.insertBefore(createAddLanguageField("B"), borders[borders.length-1]);
+    
+    // C Languages
+    var cRows = table.getElementsByClassName("C");
+    if (cRows.length <= 0) {
+        var border = document.createElement("tr");
+        border.className = "border";
+        border.innerHTML = "<td colspan='3'></td>";
+        table.insertBefore(border, table.getElementsByClassName("B")[0]);
+    }
+    
+    var borders = document.getElementsByClassName("border");
+    table.insertBefore(createAddLanguageField("C"), borders[0]);
+
+    // N Languages
+    table.insertBefore(createAddLanguageField("N"), 
+                       table.getElementsByClassName("C")[0]);
+    
+
+
+
+    //var c = document.getElementsByClassName("C");
+
+    //createAddLanguageField("N", document.getElementsByClassName("C")[0]);
+    //createAddLanguageField("C", document.getElementsByClassName("border")[0]);
+    //createAddLanguageField("B", document.getElementsByClassName("border")[1]);
+    //createAddLanguageField("A", document.getElementsByClassName("border")[2]);
 
    // ["N", "C", "B", "A"].forEach(function (level) {
    //     createAddLanguageField(level);
