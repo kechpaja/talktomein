@@ -20,9 +20,11 @@ def addlangrow(level, langlist):
         acc += "<option value=\"%s\">%s</option>" % (l, langlist[l])
     return acc + "</select></td></tr>"
 
-def genpage(langs, title, langlist=None):
-    # Expect query to be a list of lists or tuples containing the
+def langpage(langs, user="", langlist=None):
+    # Expect "langs" to be a list of lists or tuples containing the
     # language code, language, and level
+    title = ("Edit language list" if langlist else user + " speaks...")
+
     acc = "<html><head><title>" + title + '''</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="/nyelv/css/styles.css">
@@ -49,3 +51,6 @@ def genpage(langs, title, langlist=None):
         <script type="text/javascript" src="/nyelv/js/scripts.js"></script>'''
 
     return acc + "</body></html>"
+
+def homepage():
+    return "<html>HOME</html>" # TODO home page, with login and new acct dialogs

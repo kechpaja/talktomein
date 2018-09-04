@@ -4,7 +4,6 @@
 
 import MySQLdb
 
-
 class DatabaseWrapper(object):
     def __init__(self, config_file):
         self.cnxn = MySQLdb.connect(host="nyelv.db",
@@ -60,22 +59,3 @@ class DatabaseWrapper(object):
             sql += ",".join(["(%s,%s,%s)"]*len(languages))
             cursor.execute(sql, tuple(sum(languages, [])))
         self.cnxn.commit()
-
-
-
-# TODO old (still in code in places)
-class DatabaseMiddleware(object):
-    def __init__(self, config_file):
-        self.cnxn = MySQLdb.connect(host="nyelv.db",
-                                    db="nyelv",
-                                    user="nyelv",
-                                    read_default_file=config_file,
-                                    charset="utf8")
-
-    def process_request(self, req, resp):
-        req.context["db"] = self.cnxn
-
-    def process_response(self, req, resp, resource, req_succeeded):
-        if req_succeeded:
-            req.context["db"].commit()
-        req.context["db"].close()
