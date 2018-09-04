@@ -110,6 +110,13 @@ class LoginResource(object):
                 <body><h1>Login failed</h1></body></html>'''
             resp.status = falcon.HTTP_200 # TODO ??? 401?
 
+class LoginPageResource(object):
+    def on_get(self, req, resp):
+        pass # TODO display login page
+
+class BadTokenPageResource(object):
+    def on_get(self, req, resp):
+        pass # TODO display bad token page
 
 class UpdateListResource(object):
     def on_post(self, req, resp):
