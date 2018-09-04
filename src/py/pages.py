@@ -1,0 +1,51 @@
+#######
+# Pages
+######
+
+# XXX langlist = list of all possible languages
+
+def mkrow(lang, langlist):
+    acc = "<tr id=\"" + lang[0] + "\" class=\"" + lang[2] + "\">"
+    acc += ("<button class=\"remove-button\">-</button>" if langlist else "")
+    acc += "<td class=\"left-column\">"+("&bigstar;" if lang[2] == "N" else "")
+    return acc + "</td><td class=\"language\">" + lang[1] + "</td></tr>"
+
+def addlangrow(level, langlist):
+    acc = "<tr class=\"" + level + "\">"
+    acc += "<button class=\"add-button\">+</button><td class=\"left-column\">"
+    if level == "N":
+        acc += "&bigstar;"
+    acc += "</td><td><select id=\"add" + level + "\">"
+    for l in langlist:
+        acc += "<option value=\"%s\">%s</option>" % (l, langlist[l])
+    return acc + "</select></td></tr>"
+
+def genpage(langs, title, langlist=None):
+    # Expect query to be a list of lists or tuples containing the
+    # language code, language, and level
+    acc = "<html><head><title>" + title + '''</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="/nyelv/css/styles.css">
+        </head><body><table>'''
+
+    # TODO make more Pythonic?
+    blocks = []
+    for level in ["N", "C", "B", "A"]:
+        row = "".join([mkrow(l, langlist) for l in langs if l[2] == level])
+        blocks.append(row + (addlangrow(level, langlist) if langlist else ""))
+    blocks = [blocks[0] + blocks[1], blocks[2], blocks[3]]
+    blocks = [b for b in blocks if len(b) > 0]
+    acc += "\n<tr class=\"border\"><td colspan=\"3\"></td></tr>\n".join(blocks)
+
+    acc += '''</table><p id="key"> Key: <span class="C">fluent</span>, 
+        <span class="B">intermediate</span>,<span class="A">beginner</span>.
+        Native languages are starred 
+        (<span class="left-column">&bigstar;</span>).</p>'''
+    if langlist:
+        # TODO localize text?
+        acc += "<button id=\"save-button\">Save changes</button>"
+        acc += "<script>var languages = {"
+        acc += ",".join(['"%s":"%s"' % t for t in langlist]) + '''};</script>
+        <script type="text/javascript" src="/nyelv/js/scripts.js"></script>'''
+
+    return acc + "</body></html>"
