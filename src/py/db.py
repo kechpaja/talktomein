@@ -3,6 +3,7 @@
 #####
 
 import MySQLdb
+import uuid
 
 class DatabaseWrapper(object):
     def __init__(self, config_file):
@@ -18,7 +19,7 @@ class DatabaseWrapper(object):
     def add_token(self,  user):
         # Token is auto-generated here
         cursor = self.cnxn.cursor()
-        token = "" # TODO generate
+        token = str(uuid.uuid4())
         cursor.execute("insert into tokens values (%s, %s)", (token, user))
         self.cnxn.commit()
         return token
