@@ -50,7 +50,3 @@ class SessionMiddleware(object):
                 req.context["db"].delete_token(req.cookies[cookiename])
                 resp.unset_cookie(cookiename)
             req.path = "/"
-
-    def process_resource(self, req, resp, resource, params):
-        if req.context["user"]:
-            resource.user = req.context["user"]
