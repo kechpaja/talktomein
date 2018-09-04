@@ -16,23 +16,24 @@ class DatabaseWrapper(object):
     def disconnect(self):
         self.cnxn.close()
 
-    def add_session(self,  user):
-        # Session ID is auto-generated here
+    def add_token(self,  user):
+        # Token is auto-generated here
         cursor = self.cnxn.cursor()
-        session_id = "" # TODO generate
-        cursor.execute("insert into sessions values (%s, %s)",(session_id,user))
+        token = "" # TODO generate
+        cursor.execute("insert into tokens values (%s, %s)", (token, user))
+        self.cnxn.commit()
+        return token
+
+    def delete_token(self, token):
+        cursor = self.cnxn.cursor()
+        cursor.execute("delete from tokens where id = %s", (token,))
         self.cnxn.commit()
 
-    def delete_session(self, session_id):
+    def get_token_user(self, token):
         cursor = self.cnxn.cursor()
-        cursor.execute("delete from sessions where id = %s", (session_id,))
-        self.cnxn.commit()
-
-    def session_user(self, session_id):
-        cursor = self.cnxn.cursor()
-        cursor.execute("select * from sessions where id = %s", (session_id,))
+        cursor.execute("select * from tokens where id = %s", (token,))
         session = cursor.fetchone()
-        # TODO make sure session isn't too old
+        # TODO make sure token isn't too old
         if session:
             return session[1]
         return None

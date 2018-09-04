@@ -22,15 +22,15 @@ class SessionMiddleware(object):
         # TODO should there be a cookie-deleting logout page?
         if req.path == "/update":
             if "token" in req.params:
-                cursor = req.context["db"].cursor()
-                # TODO get token, check against stored value
-                # TODO if not acceptable, direct to failure page
+                user = req.context["db"].get_token_user(req.params["token"])
+                if not user:
+                    pass # TODO redirect to login link failure page
+                    return
+                req.context["db"].delete_token(req.params["token"])
+                del req.params["token"] # XXX is this a good idea?
 
-                # TODO get user (probably already done in check)
-                session_id = req.context["db"].add_session(user)
-
-                resp.set_cookie("nyelv-session",
-                                session_id,
+                resp.set_cookie(cookiename,
+                                req.context["db"].add_token(user),
                                 domain="kechpaja.com",
                                 path="/nyelv/",
                                 max_age=3600,
@@ -39,15 +39,15 @@ class SessionMiddleware(object):
                 return
 
             elif cookiename in req.cookies:
-                user = req.context["db"].session_user(req.cookies[cookiename])
+                user = req.context["db"].get_token_user(req.cookies[cookiename])
                 if user:
                     req.context["user"] = user
                     return
 
             req.path = "/login" # Change route to login page
-        elif req.path == "/logout":
+        elif req.path == "/logout": # TODO do this with JS query?
             if cookiename in req.cookies:
-                req.context["db"].delete_session(req.cookies[cookiename])
+                req.context["db"].delete_token(req.cookies[cookiename])
                 resp.unset_cookie(cookiename)
             req.path = "/"
 
