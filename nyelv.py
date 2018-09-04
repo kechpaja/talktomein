@@ -2,6 +2,21 @@ import falcon
 import json
 import MySQLdb
 
+def gencookie(user):
+    # TODO generate and store actual token
+    return json.dumps({"user" : user, "token" : "token"})
+
+def chklogin(cookies):
+    if "nyelv-session" not in cookies:
+        return None
+
+    cookiedict = json.loads(cookies["nyelv-session"])
+    # TODO retrieve and verify actual token; check age
+    if cookiedict["token"] == "token":
+        return cookiedict["user"]
+    else:
+        return None
+
 # Database helper functions
 def fetchuserlangs(user, cnxn):
     sql = '''select
@@ -33,9 +48,9 @@ def genpage(user, cnxn, title, scripts=False):
 
     # Expect query to be a list of lists or tuples containing the
     # language code, language, and level
-    acc = "<html>\<head><title>" + title + '''</title>
+    acc = "<html><head><title>" + title + '''</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="../css/styles.css">
+        <link rel="stylesheet" type="text/css" href="/nyelv/css/styles.css">
         </head><body><table>'''
 
     # TODO make more Pythonic?
@@ -54,7 +69,7 @@ def genpage(user, cnxn, title, scripts=False):
         acc += "<script>var languages = {"
         acc += ",".join(['"%s":"%s"' % t for t in fetchlangs(cnxn)])
         acc += "};var user = \"" + user + '''";</script>
-            <script type="text/javascript" src="../js/scripts.js"></script>'''
+        <script type="text/javascript" src="/nyelv/js/scripts.js"></script>'''
 
     return acc + "</body></html>"
 
@@ -71,13 +86,39 @@ class LanguageListResource(object):
         resp.content_type = "text/html; charset=utf-8"
         resp.status = falcon.HTTP_200
 
-class UpdateListResource(object):
-    def on_get(self, req, resp, user):
-        resp.body = genpage(user, dbconnect(), "Edit language list", True)
-        resp.content_type = "text/html; charset=utf-8"
-        resp.status = falcon.HTTP_200
+class LoginResource(object):
+    def on_get(self, req, resp, user, code):
+        # TODO verify code against something in database
+        if code == "passw0rd":
+            # TODO set additional cookie fields
+            resp.set_cookie("nyelv-session",
+                            gencookie(user),
+                            domain="kechpaja.com",
+                            path="/nyelv/",
+                            max_age=3600, # TODO update as necessary
+                            http_only=False)
+            resp.body = genpage(user, dbconnect(), "Edit language list", True)
+            resp.content_type = "text/html; charset=utf-8"
+            resp.status = falcon.HTTP_200
+        else:
+            # TODO set body to some sort of "login failed" page
+            # This will do for now:
+            # But eventually we should tell the user if code has already been
+            # used, since the codes I eventually intend to send out will be
+            # single-use (and will eventually expire). 
+            resp.body = '''<html><head><title>Login failed</title></head>
+                <body><h1>Login failed</h1></body></html>'''
+            resp.status = falcon.HTTP_200 # TODO ??? 401?
 
-    def on_post(self, req, resp, user):
+
+class UpdateListResource(object):
+    def on_post(self, req, resp):
+        user = chklogin(req.cookies)
+        if not user:
+            # TODO redirect to some failure page?
+            resp.status = falcon.HTTP_401
+            return
+
         data = json.loads(req.stream.read().decode("utf-8"))
         languages = [[user, lang, data[lang]] for lang in data.keys()]
 
@@ -100,10 +141,9 @@ class UpdateListResource(object):
 # Probably just going to send the user a token, which will be verified when
 # the GET request for the update page is processed. A session cookie will then
 # be added? 
-# Or maybe just require the token sent to user when save is posted. Can access
-# update page for any user, but can't save without auth? 
 
 # Start Falcon
 app = falcon.API()
 app.add_route("/ei/{user}", LanguageListResource())
-app.add_route("/update/{user}", UpdateListResource())
+app.add_route("/login/{user}/{code}", LoginResource())
+app.add_route("/update", UpdateListResource())

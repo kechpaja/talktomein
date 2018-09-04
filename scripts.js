@@ -124,8 +124,9 @@
 
         //var password = document.getElementById("pwd").value;
 
-        fetch(user, {
-            method: "post",
+        fetch("/nyelv/update", {
+            method: "POST",
+            credentials: "same-origin",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
