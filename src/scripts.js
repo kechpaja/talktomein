@@ -1,7 +1,7 @@
 (function () {
     // Enable remove buttons
     function enableRemoveButton(button) {
-        var row = button.parentElement;
+        var row = button.parentElement.parentElement;
         button.onclick = function () { 
             row.parentElement.removeChild(row); 
         };
@@ -13,19 +13,18 @@
     }
 
 
-    // Enable add language fields
-    var addButtons = document.getElementsByClassName("add-button");
-    for (var i = 0; i < addButtons.length; i++) {
-        var row = addButtons[i].parentElement;
-        var level = row.className;
-        addButtons[i].onclick = function () {
+    // Enable add buttons
+    function enableAddButton(button) {
+        var row = button.parentElement.parentElement;
+        button.onclick = function () {
+            var level = row.className;
             var lang = document.getElementById("add" + level).value;
 
             var langtr = document.createElement("tr");
             langtr.id = lang;
             langtr.className = level;
 
-            var inner = "<button class='remove-button'>-</button>";
+            var inner = "<td><button class='remove-button'>-</button></td>";
             inner += "<td class='left-column'>" + (level==="N"?"&bigstar;":"");
             inner += "</td><td class='language'>"+languages[lang]+"</td></tr>";
             langtr.innerHTML = inner;
@@ -33,6 +32,12 @@
             row.parentElement.insertBefore(langtr, row);
             enableRemoveButton(langtr);
         };
+
+    }
+
+    var addButtons = document.getElementsByClassName("add-button");
+    for (var i = 0; i < addButtons.length; i++) {
+        enableAddButton(addButtons[i]);
     }
 
 
@@ -45,7 +50,7 @@
             langs[row.id] = row.className; // TODO does this work?
         }
 
-        fetch("/nyelv/update", {
+        fetch("/langlist/", {
             method: "POST",
             credentials: "same-origin",
             headers: {
