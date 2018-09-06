@@ -5,6 +5,8 @@
 import falcon
 import json
 
+from .middleware import DatabaseMiddleware
+from .middleware import SessionMiddleware
 from .pages import langpage
 from .pages import homepage
 
