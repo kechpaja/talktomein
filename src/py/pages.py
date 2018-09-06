@@ -28,7 +28,7 @@ def langpage(langs, user="", langlist=None):
     acc = "<html><head><title>" + title + '''</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="'''
-    acc += ("" if langlist else "../") + 'css/styles.css"></head><body><table>'
+    acc += '/langlist/css/styles.css"></head><body><table>'
 
     # TODO make more Pythonic?
     blocks = []
@@ -48,7 +48,7 @@ def langpage(langs, user="", langlist=None):
         acc += "<button id=\"save-button\">Save changes</button>"
         acc += "<script>var languages = {"
         acc += ",".join(['"%s":"%s"' % t for t in langlist]) + '''};</script>
-        <script type="text/javascript" src="js/scripts.js"></script>'''
+       <script type="text/javascript" src="/langlist/js/scripts.js"></script>'''
 
     return acc + "</body></html>"
 

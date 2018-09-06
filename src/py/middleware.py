@@ -8,10 +8,10 @@ cookiename = "nyelv-session"
 
 class DatabaseMiddleware(object):
     def __init__(self, config_file):
-        self.db = DatabaseWrapper(config_file)
+        self.config_file = config_file
 
     def process_request(self, req, resp):
-        req.context["db"] = self.db
+        req.context["db"] = DatabaseWrapper(self.config_file)
 
     def process_response(self, req, resp, resource, req_succeeded):
         req.context["db"].disconnect()
