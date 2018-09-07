@@ -5,6 +5,7 @@
 import falcon
 import json
 
+from .email import Mailer
 from .middleware import DatabaseMiddleware
 from .middleware import SessionMiddleware
 from .pages import homepage
@@ -12,6 +13,9 @@ from .pages import langpage
 from .pages import linksentpage
 
 class HomeResource(object):
+    def __init__(self, mailer):
+        self.mailer = mailer
+
     def on_get(self, req, resp):
         if "user" in req.context and req.context["user"]:
             db = req.context["db"]
@@ -34,8 +38,13 @@ class HomeResource(object):
             reqbody = req.stream.read().decode("utf-8")
             data = dict(tuple(f.split("=")) for f in reqbody.split("&"))
             if "username" in data and data["username"]:
-                # TODO actually generate login link
-                resp.body = linksentpage(data["username"])
+                email = req.context["db"].get_user_email(data["username"])
+                if email:
+                    token = req.context["db"].add_token(data["username"])
+                    self.mailer.send_link(token, email) # TODO catch errors
+                    resp.body = linksentpage(data["username"])
+                else:
+                    resp.body = homepage() # TODO Tell user what happened?
             else:
                 resp.body = homepage() # TODO I think so, right?
             resp.content_type = "text/html; charset=utf-8"
@@ -54,4 +63,4 @@ middleware = [DatabaseMiddleware(config_file), SessionMiddleware()]
 app = falcon.API(middleware=middleware)
 
 app.add_route("/{user}", ListResource())
-app.add_route("/", HomeResource())
+app.add_route("/", HomeResource(Mailer())) # TODO Mailer will take path to file

@@ -61,3 +61,11 @@ class DatabaseWrapper(object):
             sql += ",".join(["(%s,%s,%s)"]*len(langs))
             cursor.execute(sql, tuple(sum(langs, [])))
         self.cnxn.commit()
+
+    def get_user_email(self, user):
+        cursor = self.cnxn.cursor()
+        cursor.execute("select email from users where id = %s", (user,))
+        data = cursor.fetchone()
+        if data:
+            return data[0]
+        return None
