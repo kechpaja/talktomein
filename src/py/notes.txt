@@ -9,6 +9,3 @@ the list (before stars).
 Allow user to set order of languages (how to do that in DB? Can it be auto?).
 
 Set up update submission as form, so that we don't need to use as much JS.
-
-
-Add line to language update page indicating which user is currently logged in.
