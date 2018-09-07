@@ -30,7 +30,8 @@
             langtr.innerHTML = inner;
 
             row.parentElement.insertBefore(langtr, row);
-            enableRemoveButton(langtr);
+            var button = langtr.getElementsByClassName("remove-button")[0];
+            enableRemoveButton(button);
         };
 
     }
