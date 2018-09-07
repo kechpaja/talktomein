@@ -42,7 +42,6 @@ class SessionMiddleware(object):
                 del req.params["token"]
 
             elif cookiename in req.cookies:
-                print(req.method + " " + cookiename)
                 cookie = req.cookies[cookiename]
                 if "action" in req.params and req.params["action"] == "logout":
                     req.context["db"].delete_token(cookie)

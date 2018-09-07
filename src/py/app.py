@@ -12,7 +12,7 @@ from .pages import homepage
 
 class HomeResource(object):
     def on_get(self, req, resp):
-        if "user" in req.context:
+        if "user" in req.context and req.context["user"]:
             db = req.context["db"]
             resp.body = langpage(db.user_langs(req.context["user"]), 
                                  langlist=db.all_langs())
@@ -22,10 +22,9 @@ class HomeResource(object):
         resp.status = falcon.HTTP_200
 
     def on_post(self, req, resp):
-        if "user" in req.context["user"]:
+        if "user" in req.context and req.context["user"]:
             data = json.loads(req.stream.read().decode("utf-8"))
-            languages = [[user, lang, data[lang]] for lang in data.keys()]
-            req.context["db"].update_langs(req.context["user"], languages)
+            req.context["db"].update_langs(req.context["user"], data)
 
             # TODO response body? 
             resp.status = falcon.HTTP_200

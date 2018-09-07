@@ -56,7 +56,8 @@ class DatabaseWrapper(object):
         cursor = self.cnxn.cursor()
         cursor.execute("delete from whospeakswhat where user = %s", (user,))
         if len(languages) > 0:
+            langs = [[user, l, languages[l]] for l in languages.keys()]
             sql = "insert into whospeakswhat values "
-            sql += ",".join(["(%s,%s,%s)"]*len(languages))
-            cursor.execute(sql, tuple(sum(languages, [])))
+            sql += ",".join(["(%s,%s,%s)"]*len(langs))
+            cursor.execute(sql, tuple(sum(langs, [])))
         self.cnxn.commit()
