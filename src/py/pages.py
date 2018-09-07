@@ -4,6 +4,12 @@
 
 # XXX langlist = list of all possible languages
 
+def generalpage(title, insides):
+    return "<html><head><title>" + title + '''</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="/langlist/css/styles.css">
+        </head><body>''' + insides + "</body></html>"
+
 def mkrow(lang, langlist):
     acc = "<tr id=\"" + lang[0] + "\" class=\"" + lang[2] + "\">"
     if langlist:
@@ -26,11 +32,7 @@ def langpage(langs, user, langlist=None):
     # language code, language, and level
     title = ("Edit language list" if langlist else user + " speaks...")
 
-    acc = "<html><head><title>" + title + '''</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="/langlist/css/styles.css">
-        </head><body><h1>''' + title + "</h1>"
-
+    acc = "<h3>" + title + "</h3>"
     if langlist:
         acc += "<p>Logged in as " + user
         acc += ". <a href='/langlist?action=logout'>Logout</a></p>"
@@ -57,7 +59,14 @@ def langpage(langs, user, langlist=None):
         acc += ",".join(['"%s":"%s"' % t for t in langlist]) + '''};</script>
        <script type="text/javascript" src="/langlist/js/scripts.js"></script>'''
 
-    return acc + "</body></html>"
+    return generalpage(title, acc)
 
 def homepage():
-    return "<html>HOME</html>" # TODO home page, with login and new acct dialogs
+    # TODO add new account dialog/boxes
+    return generalpage("Log in to edit language list", '''<form method="POST">
+        <input type="text" name="username" placeholder="Username" required>
+        <button type="submit">Send login link</button></form>''')
+
+def linksentpage(username):
+    return generalpage("Login link sent", '''<p>A login link has been sent
+        to ''' + username + ".</p>")

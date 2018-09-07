@@ -7,8 +7,9 @@ import json
 
 from .middleware import DatabaseMiddleware
 from .middleware import SessionMiddleware
-from .pages import langpage
 from .pages import homepage
+from .pages import langpage
+from .pages import linksentpage
 
 class HomeResource(object):
     def on_get(self, req, resp):
@@ -29,8 +30,16 @@ class HomeResource(object):
             # TODO response body? 
             resp.status = falcon.HTTP_200
         else:
-            # TODO error response body
-            resp.status = falcon.HTTP_401
+            # Form submission to sent login link
+            reqbody = req.stream.read().decode("utf-8")
+            data = dict(tuple(f.split("=")) for f in reqbody.split("&"))
+            if "username" in data and data["username"]:
+                # TODO actually generate login link
+                resp.body = linksentpage(data["username"])
+            else:
+                resp.body = homepage() # TODO I think so, right?
+            resp.content_type = "text/html; charset=utf-8"
+        resp.status = falcon.HTTP_200
 
 
 class ListResource(object):
