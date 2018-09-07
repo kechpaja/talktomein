@@ -21,15 +21,21 @@ def addlangrow(level, langlist):
         acc += "<option value=\"%s\">%s</option>" % (l[0], l[1])
     return acc + "</select></td></tr>"
 
-def langpage(langs, user="", langlist=None):
+def langpage(langs, user, langlist=None):
     # Expect "langs" to be a list of lists or tuples containing the
     # language code, language, and level
     title = ("Edit language list" if langlist else user + " speaks...")
 
     acc = "<html><head><title>" + title + '''</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="'''
-    acc += '/langlist/css/styles.css"></head><body><table>'
+        <link rel="stylesheet" type="text/css" href="/langlist/css/styles.css">
+        </head><body><h1>''' + title + "</h1>"
+
+    if langlist:
+        acc += "<p>Logged in as " + user
+        acc += ". <a href='/langlist?action=logout'>Logout</a></p>"
+
+    acc += "<table>"
 
     # TODO make more Pythonic?
     blocks = []
