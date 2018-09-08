@@ -1,0 +1,52 @@
+body {
+    font-size: 30px;
+    font-family: "Trebuchet MS", Times, serif;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    color: black;
+}
+
+table {
+    border-collapse: collapse;
+    font-size: inherit;
+}
+
+td {
+    padding: 0.1em;
+}
+
+.left-column {
+    color: orange;
+}
+
+.C, .N {
+    background: #00ffff;
+}
+
+.B {
+    background: #ffff00;
+}
+
+.A {
+    background: #9E9E9E;
+}
+
+.language {
+    padding-right: 1em;
+    width: 100%;
+}
+
+.border {
+    border-bottom: 0.2em solid white;
+}
+
+
+
+.remove-button {
+    
+}
+
+#save-button {
+
+}
