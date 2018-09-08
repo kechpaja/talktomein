@@ -14,14 +14,12 @@ def mkrow(lang, langlist):
     acc = "<tr id=\"" + lang[0] + "\" class=\"" + lang[2] + "\">"
     if langlist:
         acc += "<td><button class=\"remove-button\">-</button></td>"
-    acc += "<td class=\"left-column\">"+("&bigstar;" if lang[2] == "N" else "")
+    acc += "<td>" + lang[2]
     return acc + "</td><td class=\"language\">" + lang[1] + "</td></tr>"
 
 def addlangrow(level, langlist):
     acc = "<tr class=\"" + level + "\"><td>"
-    acc += "<button class='add-button'>+</button></td><td class='left-column'>"
-    if level == "N":
-        acc += "&bigstar;"
+    acc += "<button class='add-button'>+</button></td><td>" + level
     acc += "</td><td><select id=\"add" + level + "\">"
     for l in langlist:
         acc += "<option value=\"%s\">%s</option>" % (l[0], l[1])
@@ -49,9 +47,8 @@ def langpage(langs, user, langlist=None):
     acc += "\n<tr class=\"border\"><td colspan=\"3\"></td></tr>\n".join(blocks)
 
     acc += '''</table><p id="key"> Key: <span class="C">fluent</span>, 
-        <span class="B">intermediate</span>,<span class="A">beginner</span>.
-        Native languages are starred 
-        (<span class="left-column">&bigstar;</span>).</p>'''
+              <span class="B">intermediate</span>,
+              <span class="A">beginner</span>.</p>'''
     if langlist:
         # TODO localize text?
         acc += "<button id=\"save-button\">Save changes</button>"

@@ -2,7 +2,7 @@
 # Emails
 #######
 
-import requests
+#import requests
 
 class Mailer(object):
     def __init__(self):
@@ -21,4 +21,4 @@ class Mailer(object):
         # TODO Probably should give user more than just the link
         options["bodyText"] = "https://kechpaja.com/langlist?token=" + token
 
-        resp = self.mkreq("email/send", options)
+ #       resp = self.mkreq("email/send", options)

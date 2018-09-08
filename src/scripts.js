@@ -25,7 +25,7 @@
             langtr.className = level;
 
             var inner = "<td><button class='remove-button'>-</button></td>";
-            inner += "<td class='left-column'>" + (level==="N"?"&bigstar;":"");
+            inner += "<td>" + level;
             inner += "</td><td class='language'>"+languages[lang]+"</td></tr>";
             langtr.innerHTML = inner;
 
