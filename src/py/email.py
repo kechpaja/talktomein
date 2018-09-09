@@ -2,23 +2,18 @@
 # Emails
 #######
 
-#import requests
+import os
 
 class Mailer(object):
-    def __init__(self):
-        self.apikey = "" # TODO get API token from file, etc
-        self.uribase = "https://api.elasticemail.com/v2/"
-
-    def mkreq(self, verb, options):
-        newopts = dict((o, options[o]) for o in options)
-        newopts["apikey"] = self.apikey
-        return requests.get(self.uribase + verb, params=newopts)
+    def sendmsg(self, headers, body):
+        hdrs = "\n".join([h + ": " + headers[h] for h in headers.keys()])
+        with os.popen("/usr/bin/sendmail -t", "w") as f:
+            f.write(hdrs + "\n\n" + body)
 
     def send_link(self, token, address):
-        options = {}
-        options["msgTo"] = address
-
-        # TODO Probably should give user more than just the link
-        options["bodyText"] = "https://kechpaja.com/langlist?token=" + token
-
- #       resp = self.mkreq("email/send", options)
+        headers = {
+            "To": address,
+            "Subject": "Login Link"
+        }
+        body = "Login link: https://kechpaja.com/langlist?token=" + token
+        self.sendmsg(headers, body)
