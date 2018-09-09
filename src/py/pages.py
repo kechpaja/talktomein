@@ -14,13 +14,13 @@ def mkrow(lang, langlist):
     acc = "<tr id=\"" + lang[0] + "\" class=\"" + lang[2] + "\">"
     if langlist:
         acc += "<td><button class=\"remove-button\">-</button></td>"
-    acc += "<td>" + lang[2]
+    acc += "<td class='level'>" + lang[2]
     return acc + "</td><td class=\"language\">" + lang[1] + "</td></tr>"
 
 def addlangrow(level, langlist):
     acc = "<tr class=\"" + level + "\"><td>"
-    acc += "<button class='add-button'>+</button></td><td>" + level
-    acc += "</td><td><select id=\"add" + level + "\">"
+    acc += "<button class='add-button'>+</button></td><td class='level'>"
+    acc += level + "</td><td><select id=\"add" + level + "\">"
     for l in langlist:
         acc += "<option value=\"%s\">%s</option>" % (l[0], l[1])
     return acc + "</select></td></tr>"
