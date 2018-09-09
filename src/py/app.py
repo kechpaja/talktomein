@@ -5,7 +5,7 @@
 import falcon
 import json
 
-from .email import Mailer
+from .email import send_link
 from .middleware import DatabaseMiddleware
 from .middleware import SessionMiddleware
 from .pages import homepage
@@ -13,9 +13,6 @@ from .pages import langpage
 from .pages import linksentpage
 
 class HomeResource(object):
-    def __init__(self, mailer):
-        self.mailer = mailer
-
     def on_get(self, req, resp):
         if "user" in req.context and req.context["user"]:
             db = req.context["db"]
@@ -41,7 +38,7 @@ class HomeResource(object):
                 email = req.context["db"].get_user_email(data["username"])
                 if email:
                     token = req.context["db"].add_token(data["username"])
-                    self.mailer.send_link(token, email) # TODO catch errors
+                    send_link(token, email) # TODO catch errors
                     resp.body = linksentpage(data["username"])
                 else:
                     resp.body = homepage() # TODO Tell user what happened?
@@ -63,4 +60,4 @@ middleware = [DatabaseMiddleware(config_file), SessionMiddleware()]
 app = falcon.API(middleware=middleware)
 
 app.add_route("/{user}", ListResource())
-app.add_route("/", HomeResource(Mailer())) # TODO Mailer will take path to file
+app.add_route("/", HomeResource())
