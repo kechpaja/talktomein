@@ -31,12 +31,6 @@ body > button, form > button, form > input {
     margin-bottom: 0.4em;
 }
 
-td > button {
-    height: 45px;
-    width: 45px;
-    text-align: center;
-}
-
 .C, .N {
     background: #00ffff;
 }
@@ -47,14 +41,6 @@ td > button {
 
 .A {
     background: #9E9E9E;
-}
-
-.C + .C, .B + .B, .A + .A {
-    border-top: 1px solid black;
-}
-
-.C + .B, .B + .A {
-    margin-top: 0.4em;
 }
 
 .language {
@@ -72,25 +58,4 @@ td > button {
 
 .border {
     border-bottom: 0.4em solid white;
-}
-
-.add-button {
-    background-color: #00ff00;
-}
-
-.remove-button {
-    color: white;
-    background-color: #ff0000;
-}
-
-#save-button {
-    background-color: #ffa500;
-}
-
-#save-button:hover {
-    background-color: #ffb000;
-}
-
-#save-button:active {
-    background-color: #ffb600;
 }

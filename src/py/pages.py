@@ -4,11 +4,12 @@
 
 # XXX langlist = list of all possible languages
 
-def generalpage(title, insides):
-    return "<html><head><title>" + title + '''</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="/langlist/css/styles.css">
-        </head><body>''' + insides + "</body></html>"
+def generalpage(title, insides, css):
+    acc = "<html><head><title>" + title + '''</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">'''
+    for f in css:
+        acc += "<link rel='stylesheet' type='text/css' href='%s'>" % f
+    return acc + "</head><body>" + insides + "</body></html>"
 
 def mkrow(lang, langlist):
     acc = "<tr id=\"" + lang[0] + "\" class=\"" + lang[2] + "\">"
@@ -55,14 +56,17 @@ def langpage(langs, user, langlist=None):
         acc += ",".join(['"%s":"%s"' % t for t in langlist]) + '''};</script>
        <script type="text/javascript" src="/langlist/js/scripts.js"></script>'''
 
-    return generalpage(title, acc)
+    css = ["general.css"] + (["update.css"] if langlist else [])
+    return generalpage(title, acc, ["/langlist/css/%s" % c for c in css])
 
 def homepage():
+    title = "Log in to edit language list"
     # TODO add new account dialog/boxes
-    return generalpage("Log in to edit language list", '''<form method="POST">
+    body = '''<form method="POST">
         <input type="text" name="username" placeholder="Username" required>
-        <button type="submit">Send login link</button></form>''')
+        <button type="submit">Send login link</button></form>'''
+    return generalpage(title, body, ["/langlist/css/general.css"])
 
 def linksentpage(username):
     return generalpage("Login link sent", '''<p>A login link has been sent
-        to ''' + username + ".</p>")
+        to ''' + username + ".</p>", ["/langlist/css/general.css"])

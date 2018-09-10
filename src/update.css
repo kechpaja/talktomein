@@ -1,0 +1,31 @@
+td > button {
+    height: 45px;
+    width: 45px;
+    text-align: center;
+}
+
+.C, .B, .A {
+    border-top: 5px solid white;
+    border-bottom: 5px solid white;
+}
+
+.add-button {
+    background-color: #00ff00;
+}
+
+.remove-button {
+    color: white;
+    background-color: #ff0000;
+}
+
+#save-button {
+    background-color: #ffa500;
+}
+
+#save-button:hover {
+    background-color: #ffb000;
+}
+
+#save-button:active {
+    background-color: #ffb600;
+}
