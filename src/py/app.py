@@ -26,6 +26,9 @@ class HomeResource(object):
     def on_post(self, req, resp):
         if "user" in req.context and req.context["user"]:
             data = json.loads(req.stream.read().decode("utf-8"))
+            for l in data:
+                if data[l] not in ["A", "B", "C"]:
+                    del data[l]
             req.context["db"].update_langs(req.context["user"], data)
 
             # TODO response body? 
