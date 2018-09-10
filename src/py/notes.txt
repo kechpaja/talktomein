@@ -1,10 +1,6 @@
-Consider getting rid of native language category, and allow user to add star
-for each language considered native, regardless of level
+Allow user to add star for each language considered native?
 
 Consider updating styling
-
-Consider adding level markers (possibly A, B, and C) on the left-hand side of
-the list (before stars).
 
 Allow user to set order of languages (how to do that in DB? Can it be auto?).
 

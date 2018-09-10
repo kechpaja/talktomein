@@ -29,16 +29,15 @@ class HomeResource(object):
             req.context["db"].update_langs(req.context["user"], data)
 
             # TODO response body? 
-            resp.status = falcon.HTTP_200
         else:
             # Form submission to sent login link
             reqbody = req.stream.read().decode("utf-8")
             data = dict(tuple(f.split("=")) for f in reqbody.split("&"))
             if "username" in data and data["username"]:
-                email = req.context["db"].get_user_email(data["username"])
-                if email:
+                address = req.context["db"].get_user_email(data["username"])
+                if address:
                     token = req.context["db"].add_token(data["username"])
-                    send_link(token, email) # TODO catch errors
+                    send_link(token, address) # TODO catch errors
                     resp.body = linksentpage(data["username"])
                 else:
                     resp.body = homepage() # TODO Tell user what happened?
