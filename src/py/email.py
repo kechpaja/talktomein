@@ -6,6 +6,7 @@ import os
 
 def send_link(token, address):
     msg = '''Subject: Login Link
+From: kechpaja@kechpaja.com
 To: %s
 
 Login link: https://kechpaja.com/langlist?token=%s''' % (address, token)
