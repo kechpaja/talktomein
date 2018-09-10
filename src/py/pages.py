@@ -36,8 +36,6 @@ def langpage(langs, user, langlist=None):
         acc += ". <a href='/langlist?action=logout'>Logout</a></p>"
 
     acc += "<table>"
-
-    # TODO make more Pythonic?
     blocks = []
     for level in ["N", "C", "B", "A"]:
         row = "".join([mkrow(l, langlist) for l in langs if l[2] == level])
@@ -45,10 +43,8 @@ def langpage(langs, user, langlist=None):
     blocks = [blocks[0] + blocks[1], blocks[2], blocks[3]]
     blocks = [b for b in blocks if len(b) > 0]
     acc += "\n<tr class=\"border\"><td colspan=\"3\"></td></tr>\n".join(blocks)
+    acc += "</table>"
 
-    acc += '''</table><p id="key"> Key: <span class="C">fluent</span>, 
-              <span class="B">intermediate</span>,
-              <span class="A">beginner</span>.</p>'''
     if langlist:
         # TODO localize text?
         acc += "<button id=\"save-button\">Save changes</button>"
