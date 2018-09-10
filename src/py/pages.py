@@ -38,10 +38,9 @@ def langpage(langs, user, langlist=None):
 
     acc += "<table>"
     blocks = []
-    for level in ["N", "C", "B", "A"]:
+    for level in ["C", "B", "A"]:
         row = "".join([mkrow(l, langlist) for l in langs if l[2] == level])
         blocks.append(row + (addlangrow(level, langlist) if langlist else ""))
-    blocks = [blocks[0] + blocks[1], blocks[2], blocks[3]]
     acc += "".join([b for b in blocks if len(b) > 0]) + "</table>"
 
     if langlist:
