@@ -13,7 +13,7 @@ def generalpage(title, insides):
 def mkrow(lang, langlist):
     acc = "<tr id=\"" + lang[0] + "\" class=\"" + lang[2] + "\">"
     if langlist:
-        acc += "<td><button class=\"remove-button\">-</button></td>"
+        acc += "<td><button class=\"remove-button\">X</button></td>"
     acc += "<td class='level'>" + lang[2]
     return acc + "</td><td class=\"language\">" + lang[1] + "</td></tr>"
 
