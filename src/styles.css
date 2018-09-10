@@ -52,5 +52,16 @@ td {
 }
 
 #save-button {
+    width: 100%;
+    font-size: inherit;
+    border: 0;
+    background-color: #ffa500
+}
 
+#save-button:hover {
+    background-color: #ffb000;
+}
+
+#save-button:active {
+    background-color: #ffb600;
 }
