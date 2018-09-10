@@ -18,8 +18,8 @@ def mkrow(lang, langlist):
     return acc + "</td><td class=\"language\">" + lang[1] + "</td></tr>"
 
 def addlangrow(level, langlist):
-    acc = "<tr class=\"" + level + "\"><td>"
-    acc += "<button class='add-button'>+</button></td><td class='level'>"
+    acc = "<tr class=\"" + level + "\">"
+    acc += "<td><button class='add-button'>+</button></td><td class='level'>"
     acc += level + "</td><td><select id=\"add" + level + "\">"
     for l in langlist:
         acc += "<option value=\"%s\">%s</option>" % (l[0], l[1])
@@ -42,7 +42,10 @@ def langpage(langs, user, langlist=None):
         blocks.append(row + (addlangrow(level, langlist) if langlist else ""))
     blocks = [blocks[0] + blocks[1], blocks[2], blocks[3]]
     blocks = [b for b in blocks if len(b) > 0]
+
+    # TODO Add border like this one after A languages as well
     acc += "\n<tr class=\"border\"><td colspan=\"3\"></td></tr>\n".join(blocks)
+    acc += "\n<tr class=\"border\"><td colspan=\"3\"></td></tr>\n"
     acc += "</table>"
 
     if langlist:
