@@ -7,6 +7,10 @@ body {
     color: black;
 }
 
+input {
+    font-size: inherit;
+}
+
 table {
     border-collapse: collapse;
     font-size: inherit;
@@ -19,6 +23,12 @@ td {
 button {
     border: 0;
     font-size: inherit;
+}
+
+body > button, form > button, form > input {
+    width: 100%;
+    padding: 0.3em 0 0.3em 0;
+    margin-bottom: 0.4em;
 }
 
 td > button {
@@ -66,8 +76,6 @@ td > button {
 }
 
 #save-button {
-    width: 100%;
-    padding: 0.3em 0 0.3em 0;
     background-color: #ffa500;
 }
 
