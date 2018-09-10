@@ -28,7 +28,6 @@ button {
 body > button, form > button, form > input {
     width: 100%;
     padding: 0.3em 0 0.3em 0;
-    margin-bottom: 0.4em;
 }
 
 .C, .N {
@@ -41,6 +40,10 @@ body > button, form > button, form > input {
 
 .A {
     background: #9E9E9E;
+}
+
+.C + .B, .B + .A, body > button, form > button {
+    border-top: 0.4em solid white;
 }
 
 .language {

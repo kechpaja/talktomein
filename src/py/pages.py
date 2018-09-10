@@ -42,12 +42,7 @@ def langpage(langs, user, langlist=None):
         row = "".join([mkrow(l, langlist) for l in langs if l[2] == level])
         blocks.append(row + (addlangrow(level, langlist) if langlist else ""))
     blocks = [blocks[0] + blocks[1], blocks[2], blocks[3]]
-    blocks = [b for b in blocks if len(b) > 0]
-
-    # TODO Add border like this one after A languages as well
-    acc += "\n<tr class=\"border\"><td colspan=\"3\"></td></tr>\n".join(blocks)
-    acc += "\n<tr class=\"border\"><td colspan=\"3\"></td></tr>\n"
-    acc += "</table>"
+    acc += "".join([b for b in blocks if len(b) > 0]) + "</table>"
 
     if langlist:
         # TODO localize text?
