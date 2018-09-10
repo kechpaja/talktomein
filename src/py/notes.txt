@@ -5,3 +5,7 @@ Consider updating styling
 Allow user to set order of languages (how to do that in DB? Can it be auto?).
 
 Set up update submission as form, so that we don't need to use as much JS.
+
+Add borders to add and remove buttons
+
+Add hover and active colors to add and remove buttons
