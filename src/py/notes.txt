@@ -9,3 +9,7 @@ Set up update submission as form, so that we don't need to use as much JS.
 Add borders to add and remove buttons
 
 Add hover and active colors to add and remove buttons
+
+Give more information (and from address) in login emails
+
+Set up "create account" system
