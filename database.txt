@@ -15,23 +15,6 @@ create table users (id varchar(255) primary key not null, email varchar(255) not
 create table languages (id varchar(255) primary key not null, name varchar(255) not null);
 create table whospeakswhat (user varchar(255) not null references users(id), language varchar(255) not null references languages(id), level varchar(10) not null, constraint pk_whospeakswhat primary key (user, language));
 
-Database (and associated user) is named "nyelv". Password is stored under
-nearlyfreespeech-nyelv.db-nyelv in encrypted file. 
-
-"Level" in whospeakswhat table currently holds A, B, C or N. In the future, we
+"Level" in whospeakswhat table currently holds A, B, or C. In the future, we
 may add additional categories, but they probably won't be more than a couple of
 characters long. 
-
-
-
-Connecting from Python:
-
-Install MySQLdb (pip install mysqlclient)
-
-
-
-Stuff:
-
-/home/protected/nyelv is the Python virtual env
-/home/private/.nyelv-db.conf holds username and password
-/home/public/nyelv/styles.css is CSS and any static pages
