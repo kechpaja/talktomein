@@ -4,7 +4,7 @@
 
 from .db import DatabaseWrapper
 
-cookiename = "myalect-session"
+cookiename = "talktomein-session"
 
 class DatabaseMiddleware(object):
     def __init__(self, config_file):
