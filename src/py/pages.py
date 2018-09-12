@@ -8,7 +8,7 @@ def generalpage(title, insides, css):
     acc = "<html><head><title>" + title + '''</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">'''
     for f in css:
-        acc += "<link rel='stylesheet' type='text/css' href='%s'>" % f
+        acc += "<link rel='stylesheet' type='text/css' href='/css/%s'>" % f
     return acc + "</head><body>" + insides + "</body></html>"
 
 def mkrow(lang, langlist):
@@ -34,7 +34,7 @@ def langpage(langs, user, langlist=None):
     acc = "<h3>" + title + "</h3>"
     if langlist:
         acc += "<p>Logged in as " + user
-        acc += ". <a href='/langlist?action=logout'>Logout</a></p>"
+        acc += ". <a href='/?action=logout'>Logout</a></p>"
 
     acc += "<table>"
     blocks = []
@@ -48,10 +48,10 @@ def langpage(langs, user, langlist=None):
         acc += "<button id=\"save-button\">Save changes</button>"
         acc += "<script>var languages = {"
         acc += ",".join(['"%s":"%s"' % t for t in langlist]) + '''};</script>
-       <script type="text/javascript" src="/langlist/js/scripts.js"></script>'''
+       <script type="text/javascript" src="/js/scripts.js"></script>'''
 
     css = ["general.css"] + (["update.css"] if langlist else [])
-    return generalpage(title, acc, ["/langlist/css/%s" % c for c in css])
+    return generalpage(title, acc, css)
 
 def homepage():
     title = "Log in to edit language list"
@@ -59,8 +59,8 @@ def homepage():
     body = '''<form method="POST">
         <input type="text" name="username" placeholder="Username" required>
         <button type="submit">Send login link</button></form>'''
-    return generalpage(title, body, ["/langlist/css/general.css"])
+    return generalpage(title, body, ["general.css"])
 
 def linksentpage(username):
     return generalpage("Login link sent", '''<p>A login link has been sent
-        to ''' + username + ".</p>", ["/langlist/css/general.css"])
+        to ''' + username + ".</p>", ["general.css"])

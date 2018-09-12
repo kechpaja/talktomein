@@ -51,7 +51,7 @@
             langs[row.id] = row.className; // TODO does this work?
         }
 
-        fetch("/langlist/", {
+        fetch("/", {
             method: "POST",
             credentials: "same-origin",
             headers: {

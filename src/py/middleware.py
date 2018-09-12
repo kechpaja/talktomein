@@ -4,7 +4,7 @@
 
 from .db import DatabaseWrapper
 
-cookiename = "nyelv-session"
+cookiename = "myalect-session"
 
 class DatabaseMiddleware(object):
     def __init__(self, config_file):
@@ -32,8 +32,8 @@ class SessionMiddleware(object):
             def set_cookie(user):
                 resp.set_cookie(cookiename,
                                     req.context["db"].add_token(user),
-                                    domain="kechpaja.com",
-                                    path="/langlist/",
+                                    domain="myalect.com",
+                                    path="/",
                                     max_age=3600,
                                     http_only=False)
 
