@@ -17,4 +17,9 @@ Perhaps have an add button after each existing language?
 
 Perhaps delete language when it's added elsewhere?
 
-Dragging and dropping? Or something else? 
+Dragging and dropping? Or something else?
+
+
+Add talktomein.com domain to Zoho mail account, if possible
+
+Make it look like emails from my site come from there
