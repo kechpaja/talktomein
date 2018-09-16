@@ -62,3 +62,13 @@ body > button, form > button, form > input {
 .border {
     border-bottom: 0.4em solid white;
 }
+
+#newacct {
+    background-color: #0000ff;
+    color: #ffffff;
+}
+
+.failmsg {
+    font-size: 20px;
+    color: #ff0000;
+}

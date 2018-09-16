@@ -20,18 +20,19 @@ class DatabaseWrapper(object):
         # Token is auto-generated here
         cursor = self.cnxn.cursor()
         token = str(uuid.uuid4())
-        cursor.execute("insert into %s values (%s, %s)", (table, token, user))
+        cursor.execute("insert into %s_tokens values (%s, %s)",
+                       (table, token, user))
         self.cnxn.commit()
         return token
 
     def delete_token(self, table, token):
         cursor = self.cnxn.cursor()
-        cursor.execute("delete from %s where id = %s", (table, token))
+        cursor.execute("delete from %s_tokens where id = %s", (table, token))
         self.cnxn.commit()
 
     def get_token_user(self, table, token):
         cursor = self.cnxn.cursor()
-        cursor.execute("select * from %s where id = %s", (table, token))
+        cursor.execute("select * from %s_tokens where id = %s", (table, token))
         session = cursor.fetchone()
         # TODO make sure token isn't too old
         if session:

@@ -33,23 +33,26 @@ class HomeResource(object):
 
             # TODO response body?
         else:
-            # Form submission to sent login link
+            # Form submission to send login link
             reqbody = req.stream.read().decode("utf-8")
             data = dict(tuple(f.split("=")) for f in reqbody.split("&"))
             if "username" in data and data["username"]:
                 username = data["username"]
                 address = req.context["db"].get_user_email(username)
-                if address or ("email" in data and data["email"]):
-                    token = req.context["db"].add_token("logins", username)
-                    if address:
-                        send_link(token, address)
-                    else:
-                        send_link(token, data["email"], True)
+                if address and "email" in data and data["email"]:
+                    resp.body = homepage("Username is in use.", True)
+                elif address:
+                    token = req.context["db"].add_token("login", username)
+                    send_link(token, address)
                     resp.body = linksentpage(username)
+                elif "email" in data and data["email"]:
+                    token = req.context["db"].add_token("login", username)
+                    send_link(token, data["email"], True)
+                    resp.body = linksentpage(username, True)
                 else:
-                    resp.body = homepage()
+                    resp.body = homepage("Username not found.")
             else:
-                resp.body = homepage() # TODO I think so, right?
+                resp.body = homepage()
             resp.content_type = "text/html; charset=utf-8"
         resp.status = falcon.HTTP_200
 

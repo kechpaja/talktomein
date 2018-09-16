@@ -44,7 +44,6 @@ def langpage(langs, user, langlist=None):
     acc += "".join([b for b in blocks if len(b) > 0]) + "</table>"
 
     if langlist:
-        # TODO localize text?
         acc += "<button id=\"save-button\">Save changes</button>"
         acc += "<script>var languages = {"
         acc += ",".join(['"%s":"%s"' % t for t in langlist]) + '''};</script>
@@ -53,14 +52,24 @@ def langpage(langs, user, langlist=None):
     css = ["general.css"] + (["update.css"] if langlist else [])
     return generalpage(title, acc, css)
 
-def homepage():
-    title = "Log in to edit language list"
-    # TODO add new account dialog/boxes
-    body = '''<form method="POST">
-        <input type="text" name="username" placeholder="Username" required>
-        <button type="submit">Send login link</button></form>'''
+def homepage(failmsg=None, newacct=True):
+    if newacct:
+        title = "Create a new account"
+        body = '''<form method="POST">%s
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="text" name="email" placeholder="Email" required>
+            <button type="submit">Submit</button></form>'''
+    else:
+        title = "Log in to edit language list"
+        body = '''<form method="POST">%s
+            <input type="text" name="username" placeholder="Username" required>
+            <button type="submit">Send login link</button>
+            <button id="new-account-button">Create New Account</button></form>
+            <script type="text/javascript" src="/js/home.js"></script>'''
+    body = body % (("<p class='failmsg'>%s</p>" % failmsg) if failmsg else "")
     return generalpage(title, body, ["general.css"])
 
-def linksentpage(username):
+def linksentpage(username, newacct=False):
+    addendum = " Click the link to verify your account." if newacct else ""
     return generalpage("Login link sent", '''<p>A login link has been sent
-        to ''' + username + ".</p>", ["general.css"])
+        to ''' + username + (".%s</p>" % addendum), ["general.css"])

@@ -31,23 +31,23 @@ class SessionMiddleware(object):
         if req.path == "/":
             def set_cookie(user):
                 resp.set_cookie(cookiename,
-                                req.context["db"].add_token("sessions", user),
+                                req.context["db"].add_token("session", user),
                                 domain="myalect.com",
                                 path="/",
                                 max_age=3600,
                                 http_only=False)
 
             if "token" in req.params and self.set_user_then(req, set_cookie):
-                req.context["db"].delete_token("logins", req.params["token"])
+                req.context["db"].delete_token("login", req.params["token"])
                 del req.params["token"]
 
             elif cookiename in req.cookies:
                 cookie = req.cookies[cookiename]
                 if "action" in req.params and req.params["action"] == "logout":
-                    req.context["db"].delete_token("sessions", cookie)
+                    req.context["db"].delete_token("session", cookie)
                     resp.unset_cookie(cookiename)
                 else:
-                    user = req.context["db"].get_token_user("sessions", cookie)
+                    user = req.context["db"].get_token_user("session", cookie)
                     if user:
                         req.context["user"] = user
                     else:
