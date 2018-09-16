@@ -23,3 +23,11 @@ Dragging and dropping? Or something else?
 Add talktomein.com domain to Zoho mail account, if possible
 
 Make it look like emails from my site come from there
+
+
+
+Create separate tables for login, session, and confirmation tokens. Perhaps the
+login and confirmation tokens can be merged, and we add an email address when
+the email="" param is passed with the login token. 
+
+If we do it that way, we need to probably put confirmation logic in middleware. 

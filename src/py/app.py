@@ -31,19 +31,23 @@ class HomeResource(object):
                     del data[l]
             req.context["db"].update_langs(req.context["user"], data)
 
-            # TODO response body? 
+            # TODO response body?
         else:
             # Form submission to sent login link
             reqbody = req.stream.read().decode("utf-8")
             data = dict(tuple(f.split("=")) for f in reqbody.split("&"))
             if "username" in data and data["username"]:
-                address = req.context["db"].get_user_email(data["username"])
-                if address:
-                    token = req.context["db"].add_token(data["username"])
-                    send_link(token, address) # TODO catch errors
-                    resp.body = linksentpage(data["username"])
+                username = data["username"]
+                address = req.context["db"].get_user_email(username)
+                if address or ("email" in data and data["email"]):
+                    token = req.context["db"].add_token("logins", username)
+                    if address:
+                        send_link(token, address)
+                    else:
+                        send_link(token, data["email"], True)
+                    resp.body = linksentpage(username)
                 else:
-                    resp.body = homepage() # TODO Tell user what happened?
+                    resp.body = homepage()
             else:
                 resp.body = homepage() # TODO I think so, right?
             resp.content_type = "text/html; charset=utf-8"

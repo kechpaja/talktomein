@@ -20,7 +20,7 @@ class DatabaseMiddleware(object):
 class SessionMiddleware(object):
     # todo must be a lambda taking one argument, the user ID
     def set_user_then(self, req, then=lambda user: None):
-        user = req.context["db"].get_token_user(req.params["token"])
+        user = req.context["db"].get_token_user("logins", req.params["token"])
         if not user:
             return False
         req.context["user"] = user
@@ -31,23 +31,23 @@ class SessionMiddleware(object):
         if req.path == "/":
             def set_cookie(user):
                 resp.set_cookie(cookiename,
-                                    req.context["db"].add_token(user),
-                                    domain="myalect.com",
-                                    path="/",
-                                    max_age=3600,
-                                    http_only=False)
+                                req.context["db"].add_token("sessions", user),
+                                domain="myalect.com",
+                                path="/",
+                                max_age=3600,
+                                http_only=False)
 
             if "token" in req.params and self.set_user_then(req, set_cookie):
-                req.context["db"].delete_token(req.params["token"])
+                req.context["db"].delete_token("logins", req.params["token"])
                 del req.params["token"]
 
             elif cookiename in req.cookies:
                 cookie = req.cookies[cookiename]
                 if "action" in req.params and req.params["action"] == "logout":
-                    req.context["db"].delete_token(cookie)
+                    req.context["db"].delete_token("sessions", cookie)
                     resp.unset_cookie(cookiename)
                 else:
-                    user = req.context["db"].get_token_user(cookie)
+                    user = req.context["db"].get_token_user("sessions", cookie)
                     if user:
                         req.context["user"] = user
                     else:
