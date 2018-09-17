@@ -32,7 +32,7 @@ class HomeResource(object):
                 if data[l] not in ["A", "B", "C"]:
                     del data[l]
             req.context["db"].update_langs(req.context["user"], data)
-            # TODO response body?
+            resp.body = "{\"ok\" : true}"
         else:
             # Form submission to send login link
             reqbody = req.stream.read().decode("utf-8")

@@ -3,7 +3,8 @@
     function enableRemoveButton(button) {
         var row = button.parentElement.parentElement;
         button.onclick = function () { 
-            row.parentElement.removeChild(row); 
+            row.parentElement.removeChild(row);
+            document.getElementById("save-button").disabled = false;
         };
     }
 
@@ -32,6 +33,7 @@
             row.parentElement.insertBefore(langtr, row);
             var button = langtr.getElementsByClassName("remove-button")[0];
             enableRemoveButton(button);
+            document.getElementById("save-button").disabled = false;
         };
 
     }
@@ -59,6 +61,14 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(langs)
-        }); // TODO error checking? 
+        }).then(function (response) {
+            return response.json();
+        }).then(function (jsonResponse) {
+            if (jsonResponse["ok"]) {
+                document.getElementById("save-button").disabled = true;
+            } else {
+                // TODO handle error response
+            }
+        });
     };
 })();

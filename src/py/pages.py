@@ -44,7 +44,7 @@ def langpage(langs, user, langlist=None):
     acc += "".join([b for b in blocks if len(b) > 0]) + "</table>"
 
     if langlist:
-        acc += "<button id=\"save-button\">Save changes</button>"
+        acc += "<button id=\"save-button\" disabled>Save changes</button>"
         acc += "<script>var languages = {"
         acc += ",".join(['"%s":"%s"' % t for t in langlist]) + '''};</script>
        <script type="text/javascript" src="/js/scripts.js"></script>'''

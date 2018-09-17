@@ -19,13 +19,17 @@ td > button {
 }
 
 #save-button {
-    background-color: #ffa500;
+    background-color: #ff9d00;
 }
 
 #save-button:hover {
-    background-color: #ffb000;
+    background-color: #ff9300;
 }
 
 #save-button:active {
-    background-color: #ffb600;
+    background-color: #ff8e00;
+}
+
+#save-button:disabled {
+    background-color: #ffb650;
 }
