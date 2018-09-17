@@ -43,7 +43,7 @@ class DatabaseWrapper(object):
         sql = '''select languages.id, languages.name, whospeakswhat.level
                  from languages join whospeakswhat 
                      on whospeakswhat.language = languages.id
-                 where (whospeakswhat.user = %s)'''
+                 where (whospeakswhat.user = %s) order by languages.name'''
         cursor = self.cnxn.cursor()
         cursor.execute(sql, (user,))
         return cursor.fetchall()
