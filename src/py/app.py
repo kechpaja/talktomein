@@ -4,6 +4,8 @@
 
 import falcon
 import json
+import re
+from urllib.parse import unquote
 
 from .email import send_link
 from .middleware import DatabaseMiddleware
@@ -30,7 +32,6 @@ class HomeResource(object):
                 if data[l] not in ["A", "B", "C"]:
                     del data[l]
             req.context["db"].update_langs(req.context["user"], data)
-
             # TODO response body?
         else:
             # Form submission to send login link
@@ -46,9 +47,16 @@ class HomeResource(object):
                     send_link(token, address)
                     resp.body = linksentpage(username)
                 elif "email" in data and data["email"]:
-                    token = req.context["db"].add_token("login", username)
-                    send_link(token, data["email"], True)
-                    resp.body = linksentpage(username, True)
+                    address = unquote(data["email"])
+                    banned = ["login", "logout", "contact", "about", "api"]
+                    if not re.match("\w+", username) or username in banned:
+                        resp.body = homepage("Invalid username. ", True)
+                    elif not re.match("[^@]+\@([^@.]+.)+\.[^@.]", address):
+                        resp.body = homepage("Invalid email. ", True)
+                    else:
+                        token = req.context["db"].add_token("login", username)
+                        send_link(token, address, True)
+                        resp.body = linksentpage(username, True)
                 else:
                     resp.body = homepage("Username not found.")
             else:
@@ -64,7 +72,7 @@ class ListResource(object):
         resp.status = falcon.HTTP_200
 
 
-config_file = "/home/protected/.nyelv-db.conf"
+config_file = "/home/protected/db.conf"
 middleware = [DatabaseMiddleware(config_file), SessionMiddleware()]
 app = falcon.API(middleware=middleware)
 

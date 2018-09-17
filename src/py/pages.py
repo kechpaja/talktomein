@@ -52,7 +52,7 @@ def langpage(langs, user, langlist=None):
     css = ["general.css"] + (["update.css"] if langlist else [])
     return generalpage(title, acc, css)
 
-def homepage(failmsg=None, newacct=True):
+def homepage(failmsg=None, newacct=False):
     if newacct:
         title = "Create a new account"
         body = '''<form method="POST">%s
@@ -64,7 +64,7 @@ def homepage(failmsg=None, newacct=True):
         body = '''<form method="POST">%s
             <input type="text" name="username" placeholder="Username" required>
             <button type="submit">Send login link</button>
-            <button id="new-account-button">Create New Account</button></form>
+            <button id="newacct">Create New Account</button></form>
             <script type="text/javascript" src="/js/home.js"></script>'''
     body = body % (("<p class='failmsg'>%s</p>" % failmsg) if failmsg else "")
     return generalpage(title, body, ["general.css"])

@@ -20,7 +20,7 @@ class DatabaseMiddleware(object):
 class SessionMiddleware(object):
     # todo must be a lambda taking one argument, the user ID
     def set_user_then(self, req, then=lambda user: None):
-        user = req.context["db"].get_token_user("logins", req.params["token"])
+        user = req.context["db"].get_token_user("login", req.params["token"])
         if not user:
             return False
         req.context["user"] = user
@@ -32,7 +32,7 @@ class SessionMiddleware(object):
             def set_cookie(user):
                 resp.set_cookie(cookiename,
                                 req.context["db"].add_token("session", user),
-                                domain="myalect.com",
+                                domain="talktomein.com",
                                 path="/",
                                 max_age=3600,
                                 http_only=False)
@@ -40,6 +40,11 @@ class SessionMiddleware(object):
             if "token" in req.params and self.set_user_then(req, set_cookie):
                 req.context["db"].delete_token("login", req.params["token"])
                 del req.params["token"]
+                if "email" in req.params and req.params["email"]:
+                    # Add user or update user email
+                    req.context["db"].add_user(req.context["user"], 
+                                               req.params["email"])
+                    del req.params["email"]
 
             elif cookiename in req.cookies:
                 cookie = req.cookies[cookiename]
