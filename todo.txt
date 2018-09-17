@@ -10,7 +10,6 @@ Add hover and active colors to add and remove buttons
 
 Give more information in login emails
 
-Set up "create account" system
 
 
 Perhaps have an add button after each existing language? 
