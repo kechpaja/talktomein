@@ -11,20 +11,21 @@ def generalpage(title, insides, css):
         acc += "<link rel='stylesheet' type='text/css' href='/css/%s'>" % f
     return acc + "</head><body>" + insides + "</body></html>"
 
-def mkrow(lang, langlist):
-    acc = "<tr id=\"" + lang[0] + "\" class=\"" + lang[2] + "\">"
+def mkrow(l, langlist):
+    acc = "<tr id=\"" + l[0] + "\" class=\"" + l[2] + "\"><td class='level'>" 
+    acc += l[2] + "</td><td class=\"language\">" + l[1] + "</td>"
     if langlist:
         acc += "<td><button class=\"remove-button\">X</button></td>"
-    acc += "<td class='level'>" + lang[2]
-    return acc + "</td><td class=\"language\">" + lang[1] + "</td></tr>"
+    return acc + "</tr>"
 
 def addlangrow(level, langlist):
     acc = "<tr class=\"" + level + "\">"
-    acc += "<td><button class='add-button'>+</button></td><td class='level'>"
-    acc += level + "</td><td><select id=\"add" + level + "\">"
+    acc += "<td class='level'>"+level+"</td><td><select id=\"add"+level+"\">"
+    acc += "<option value=\"\"></option>"
     for l in langlist:
         acc += "<option value=\"%s\">%s</option>" % (l[0], l[1])
-    return acc + "</select></td></tr>"
+    acc += "</select></td>"
+    return acc + "<td><button class='add-button'>+</button></td></tr>"
 
 def langpage(langs, user, langlist=None):
     # Expect "langs" to be a list of lists or tuples containing the
