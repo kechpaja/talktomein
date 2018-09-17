@@ -56,7 +56,7 @@ body > button, form > button, form > input {
     font-weight: bold;
     font-size: 34px;
     color: purple;
-    padding: 0.1em 0.8em 0.1em 0.1em;
+    padding: 0.1em 0.8em 0.1em 0.25em;
 }
 
 .border {
