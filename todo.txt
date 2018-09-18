@@ -25,8 +25,12 @@ Make it look like emails from my site come from there
 
 
 
-Create separate tables for login, session, and confirmation tokens. Perhaps the
-login and confirmation tokens can be merged, and we add an email address when
-the email="" param is passed with the login token. 
+Give user a way to delete their entire account. 
 
-If we do it that way, we need to probably put confirmation logic in middleware. 
+
+Add some sort of terms and conditions? Or at least explain that by adding their
+data, they consent to it being stored in my DB and shared publicly, and that
+they can delete their account at any time. 
+
+
+Contact page?
