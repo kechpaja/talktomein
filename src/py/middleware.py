@@ -34,7 +34,7 @@ class SessionMiddleware(object):
                                 req.context["db"].add_token("session", user),
                                 domain="talktomein.com",
                                 path="/",
-                                max_age=3600,
+                                max_age=2419200, # XXX 28 days
                                 http_only=False)
 
             if "token" in req.params and self.set_user_then(req, set_cookie):
