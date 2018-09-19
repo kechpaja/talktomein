@@ -45,7 +45,10 @@ class HomeResource(object):
                 elif address:
                     token = req.context["db"].add_token("login", username)
                     send_link(token, address)
-                    resp.body = linksentpage(username)
+                    resp.body = linksentpage(
+                        "Login Link Sent",
+                        "A login link has been sent to %s." % username
+                    )
                 elif "email" in data and data["email"]:
                     address = unquote(data["email"])
                     banned = ["login", "logout", "contact", "about", "api"]
@@ -56,7 +59,10 @@ class HomeResource(object):
                     else:
                         token = req.context["db"].add_token("login", username)
                         send_link(token, address, True)
-                        resp.body = linksentpage(username, True)
+                        resp.body = linksentpage(
+                            "Activation Link Sent",
+                            "An activation link has been sent to %s." % username
+                        )
                 else:
                     resp.body = homepage("Username not found.")
             else:

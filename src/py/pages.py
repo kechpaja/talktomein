@@ -70,7 +70,5 @@ def homepage(failmsg=None, newacct=False):
     body = body % (("<p class='failmsg'>%s</p>" % failmsg) if failmsg else "")
     return generalpage(title, body, ["general.css"])
 
-def linksentpage(username, newacct=False):
-    addendum = " Click the link to verify your account." if newacct else ""
-    return generalpage("Login link sent", '''<p>A login link has been sent
-        to ''' + username + (".%s</p>" % addendum), ["general.css"])
+def linksentpage(title, msg):
+    return generalpage(title, "<p>%s</p>" % msg, ["general.css"])
