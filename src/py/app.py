@@ -7,7 +7,7 @@ import json
 import re
 from urllib.parse import unquote
 
-from .email import send_link
+from . import send
 from .middleware import DatabaseMiddleware
 from .middleware import SessionMiddleware
 from .pages import homepage
@@ -44,7 +44,10 @@ class HomeResource(object):
                     resp.body = homepage("Username is in use.", True)
                 elif address:
                     token = req.context["db"].add_token("login", username)
-                    send_link(token, address)
+                    send.link(address, 
+                              "Login Link",
+                              "Click the link to log in",
+                              {"token" : token})
                     resp.body = linksentpage(
                         "Login Link Sent",
                         "A login link has been sent to %s." % username
@@ -58,7 +61,10 @@ class HomeResource(object):
                         resp.body = homepage("Invalid email. ", True)
                     else:
                         token = req.context["db"].add_token("login", username)
-                        send_link(token, address, True)
+                        send.link(address,
+                                  "Activation Link",
+                                  "Click the link to activate your account.",
+                                  {"token" : token, "email" : address})
                         resp.body = linksentpage(
                             "Activation Link Sent",
                             "An activation link has been sent to %s." % username
