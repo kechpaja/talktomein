@@ -54,7 +54,8 @@ class HomeResource(object):
                     )
                 elif "email" in data and data["email"]:
                     address = unquote(data["email"])
-                    banned = ["login", "logout", "contact", "about", "api"]
+                    banned = ["login", "logout", "contact", "about", "api",
+                              "account", "blog"]
                     if not re.match("\w+", username) or username in banned:
                         resp.body = homepage("Invalid username. ", True)
                     elif not re.match("[^@]+\@([^@.]+.)+\.[^@.]", address):
