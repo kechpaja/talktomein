@@ -17,8 +17,9 @@ class DatabaseMiddleware(object):
         req.context["db"].disconnect()
 
 
+# TODO Revisit this entire class. It could use cleanup. 
 class SessionMiddleware(object):
-    # todo must be a lambda taking one argument, the user ID
+    # "then" must be a lambda taking one argument, the user ID
     def set_user_then(self, req, then=lambda user: None):
         user = req.context["db"].get_token_user("login", req.params["token"])
         if not user:
@@ -28,7 +29,7 @@ class SessionMiddleware(object):
         return True
 
     def process_request(self, req, resp):
-        if req.path == "/":
+        if req.path in ["/", "/account/delete"]:
             def set_cookie(user):
                 resp.set_cookie(cookiename,
                                 req.context["db"].add_token("session", user),
@@ -57,3 +58,9 @@ class SessionMiddleware(object):
                         req.context["user"] = user
                     else:
                         resp.unset_cookie(cookiename)
+        elif req.path in ["/account/delete/confirm", "/account/delete/finish"]:
+            if "token" in req.params and self.set_user_then(req):
+                req.context["db"].delete_token("login", req.params["token"])
+                del req.params["token"]
+            else:
+                raise falcon.HTTPMovedPermanently("/") # TODO "auth required"?

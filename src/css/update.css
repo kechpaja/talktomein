@@ -37,3 +37,7 @@ td > button {
 #save-button:disabled {
     background-color: #ffb650;
 }
+
+#save-button + #deleteacct {
+    margin-top: 1.2em
+}

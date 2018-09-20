@@ -68,6 +68,18 @@ body > button, form > button, form > input {
     color: #ffffff;
 }
 
+#deleteacct {
+    display: block;
+    border: 0;
+    font-size: inherit;
+    width: 100%;
+    padding: 0.3em 0 0.3em 0;
+    text-align: center;
+    background-color: red;
+    color: white;
+    text-decoration: none;
+}
+
 .failmsg {
     font-size: 20px;
     color: #ff0000;

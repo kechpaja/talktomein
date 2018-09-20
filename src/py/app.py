@@ -10,9 +10,10 @@ from urllib.parse import unquote
 from . import send
 from .middleware import DatabaseMiddleware
 from .middleware import SessionMiddleware
+from .pages import deletepage
 from .pages import homepage
 from .pages import langpage
-from .pages import linksentpage
+from .pages import msgpage
 
 class HomeResource(object):
     def on_get(self, req, resp):
@@ -47,8 +48,9 @@ class HomeResource(object):
                     send.link(address, 
                               "Login Link",
                               "Click the link to log in",
+                              "/",
                               {"token" : token})
-                    resp.body = linksentpage(
+                    resp.body = msgpage(
                         "Login Link Sent",
                         "A login link has been sent to %s." % username
                     )
@@ -64,9 +66,10 @@ class HomeResource(object):
                         token = req.context["db"].add_token("login", username)
                         send.link(address,
                                   "Activation Link",
-                                  "Click the link to activate your account.",
+                                  "Click the link to activate your account",
+                                  "/",
                                   {"token" : token, "email" : address})
-                        resp.body = linksentpage(
+                        resp.body = msgpage(
                             "Activation Link Sent",
                             "An activation link has been sent to %s." % username
                         )
@@ -85,9 +88,45 @@ class ListResource(object):
         resp.status = falcon.HTTP_200
 
 
+class DeleteAccountResource(object):
+    def on_get(self, req, resp):
+        if "user" in req.context and req.context["user"]:
+            user = req.context["user"]
+            token = req.context["db"].add_token("login", req.context["user"])
+            send.link(req.context["db"].get_user_email(req.context["user"]),
+                      "Delete Account Link",
+                      "Click the link to continue deleting your account",
+                      "/account/delete/confirm",
+                      {"token" : token})
+            resp.body = msgpage(
+                "Deletion Link Sent",
+                "An account deletion link has been sent to %s." % user
+            )
+            resp.content_type = "text/html; charset=utf-8"
+        else:
+            raise falcon.HTTPMovedPermanently("/")
+
+
+class ConfirmDeleteAccountResource(object):
+    def on_get(self, req, resp):
+        token = req.context["db"].add_token("login", req.context["user"])
+        resp.body = deletepage(token)
+        resp.content_type = "text/html; charset=utf-8"
+
+
+class FinishDeleteAccountResource(object):
+    def on_get(self, req, resp):
+        req.context["db"].delete_user(req.context["user"])
+        resp.body = msgpage("Account Deleted", "Your account has been deleted.")
+        resp.content_type = "text/html; charset=utf-8"
+
+
 config_file = "/home/protected/db.conf"
 middleware = [DatabaseMiddleware(config_file), SessionMiddleware()]
 app = falcon.API(middleware=middleware)
 
+app.add_route("/account/delete", DeleteAccountResource())
+app.add_route("/account/delete/confirm", ConfirmDeleteAccountResource())
+app.add_route("/account/delete/finish", FinishDeleteAccountResource())
 app.add_route("/{user}", ListResource())
 app.add_route("/", HomeResource())

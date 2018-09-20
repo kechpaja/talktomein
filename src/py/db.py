@@ -75,3 +75,13 @@ class DatabaseWrapper(object):
         cursor = self.cnxn.cursor()
         cursor.execute("insert into users values (%s, %s)", (user, email))
         self.cnxn.commit()
+
+    def delete_user(self, user):
+        cursor = self.cnxn.cursor()
+        cursor.execute("delete from whospeakswhat where user = %s", (user,))
+        cursor.execute("delete from users where id = %s", (user,))
+        # XXX delete from session and token tables
+        # TODO remove these lines once we move session out of DB
+        cursor.execute("delete from login_tokens where user = %s", (user,))
+        cursor.execute("delete from session_tokens where user = %s", (user,))
+        self.cnxn.commit()

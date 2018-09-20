@@ -46,7 +46,8 @@ def langpage(langs, user, langlist=None):
 
     if langlist:
         acc += "<button id=\"save-button\" disabled>Save changes</button>"
-        acc += "<script>var languages = {"
+        acc += "<a id=\"deleteacct\" href=\"/account/delete\">"
+        acc += "Delete Account</a><script>var languages = {"
         acc += ",".join(['"%s":"%s"' % t for t in langlist]) + '''};</script>
        <script type="text/javascript" src="/js/scripts.js"></script>'''
 
@@ -70,5 +71,13 @@ def homepage(failmsg=None, newacct=False):
     body = body % (("<p class='failmsg'>%s</p>" % failmsg) if failmsg else "")
     return generalpage(title, body, ["general.css"])
 
-def linksentpage(title, msg):
-    return generalpage(title, "<p>%s</p>" % msg, ["general.css"])
+def msgpage(title, msg):
+    msgfmt = "<p>%s</p><p><a href=\"/\">Home</a></p>"
+    return generalpage(title, msgfmt % msg, ["general.css"])
+
+def deletepage(token):
+    body = "<p>Are you sure you want to delete your account? "
+    body += "This action is not reversible.</p>"
+    body += "<a id=\"deleteacct\" href=\"/account/delete/finish?token=%s\">"
+    body += "Delete My Account</a>"
+    return generalpage("Confirm Account Deletion", body % token,["general.css"])
