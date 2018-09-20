@@ -2,13 +2,9 @@ Allow user to add star for each language considered native?
 
 Allow user to set order of languages (how to do that in DB? Can it be auto?).
 
-Set up update submission as form, so that we don't need to use as much JS.
-
 Add borders to add and remove buttons
 
 Add hover and active colors to add and remove buttons
-
-Give more information in login emails
 
 
 
@@ -25,12 +21,13 @@ Make it look like emails from my site come from there
 
 
 
-Give user a way to delete their entire account. 
-
-
 Add some sort of terms and conditions? Or at least explain that by adding their
 data, they consent to it being stored in my DB and shared publicly, and that
 they can delete their account at any time. 
 
 
 Contact page?
+
+
+Start splitting up flows across a number of endpoints, instead of doing
+everything at / the way it currently works. 
