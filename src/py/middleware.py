@@ -2,6 +2,8 @@
 # Middleware for session management in Nyelv
 #####
 
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
+
 from .db import DatabaseWrapper
 
 cookiename = "talktomein-session"
@@ -17,50 +19,61 @@ class DatabaseMiddleware(object):
         req.context["db"].disconnect()
 
 
-# TODO Revisit this entire class. It could use cleanup. 
 class SessionMiddleware(object):
-    # "then" must be a lambda taking one argument, the user ID
-    def set_user_then(self, req, then=lambda user: None):
-        user = req.context["db"].get_token_user("login", req.params["token"])
-        if not user:
-            return False
-        req.context["user"] = user
-        then(user)
-        return True
+    def __init__(self, secret):
+        self.login_signer = URLSafeTimedSerializer(secret, salt="login")
+        self.session_signer = URLSafeTimedSerializer(secret, salt="session")
 
     def process_request(self, req, resp):
         if req.path in ["/", "/account/delete"]:
-            def set_cookie(user):
+            try:
+                user = self.login_signer.loads(req.params["token"], 
+                                               max_age=600)
+                req.context["user"] = user
                 resp.set_cookie(cookiename,
-                                req.context["db"].add_token("session", user),
+                                self.session_signer.dumps(user),
                                 domain="talktomein.com",
                                 path="/",
-                                max_age=2419200, # XXX 28 days
+                                max_age=21600, # XXX 6 hours
                                 http_only=False)
-
-            if "token" in req.params and self.set_user_then(req, set_cookie):
-                req.context["db"].delete_token("login", req.params["token"])
-                del req.params["token"]
                 if "email" in req.params and req.params["email"]:
                     # Add user or update user email
-                    req.context["db"].add_user(req.context["user"], 
-                                               req.params["email"])
-                    del req.params["email"]
+                    # TODO we can get rid of this is we create "is confirmed"
+                    # TODO flag in users table of database. 
+                    req.context["db"].add_user(user, req.params["email"])
+                return
+            except BadSignature:
+                # TODO this might have security implications. Log?
+                pass
+            except (SignatureExpired, KeyError):
+                pass
 
-            elif cookiename in req.cookies:
-                cookie = req.cookies[cookiename]
-                if "action" in req.params and req.params["action"] == "logout":
-                    req.context["db"].delete_token("session", cookie)
-                    resp.unset_cookie(cookiename)
-                else:
-                    user = req.context["db"].get_token_user("session", cookie)
-                    if user:
-                        req.context["user"] = user
-                    else:
-                        resp.unset_cookie(cookiename)
+            # This will work fine even if there's no cookie
+            if "action" in req.params and req.params["action"] == "logout":
+                resp.set_cookie(cookiename, 
+                                "", 
+                                domain="talktomein.com",
+                                path="/",
+                                max_age=0)
+                return
+
+            try:
+                req.context["user"] = self.session_signer.loads(
+                    req.cookies[cookiename],
+                    max_age=21600
+                )
+            except BadSignature:
+                pass # TODO log for security purposes
+            except (SignatureExpired, KeyError):
+                pass # Expired session or no cookie
+
         elif req.path in ["/account/delete/confirm", "/account/delete/finish"]:
-            if "token" in req.params and self.set_user_then(req):
-                req.context["db"].delete_token("login", req.params["token"])
-                del req.params["token"]
-            else:
-                raise falcon.HTTPMovedPermanently("/") # TODO "auth required"?
+            try:
+                req.context["user"] = self.login_signer.loads(
+                    req.params["token"],
+                    max_age=600
+                )
+            except BadSignature:
+                raise falcon.HTTPMovedPermanently("/") # TODO again,red flag
+            except (SignatureExpired, KeyError):
+                raise falcon.HTTPMovedPermanently("/") # TODO msg page?

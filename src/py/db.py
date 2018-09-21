@@ -12,33 +12,6 @@ class DatabaseWrapper(object):
     def disconnect(self):
         self.cnxn.close()
 
-    # XXX Table argument to this and the next three functions *must not* contain
-    # user data, as it is inserted into the DB query string unsanitized.
-    def add_token(self, table, user):
-        # Token is auto-generated here
-        cursor = self.cnxn.cursor()
-        token = str(uuid.uuid4())
-        cursor.execute("insert into " + table + "_tokens values (%s,%s,now())",
-                       (token, user))
-        self.cnxn.commit()
-        return token
-
-    def delete_token(self, table, token):
-        cursor = self.cnxn.cursor()
-        cursor.execute("delete from " + table + "_tokens where id = %s", 
-                       (token,))
-        self.cnxn.commit()
-
-    def get_token_user(self, table, token):
-        cursor = self.cnxn.cursor()
-        cursor.execute("select id,user from " + table + "_tokens where id = %s",
-                       (token,))
-        session = cursor.fetchone()
-        # TODO make sure token isn't too old
-        if session:
-            return session[1]
-        return None
-
     def user_langs(self, user):
         sql = '''select languages.id, languages.name, whospeakswhat.level
                  from languages join whospeakswhat 
@@ -80,8 +53,4 @@ class DatabaseWrapper(object):
         cursor = self.cnxn.cursor()
         cursor.execute("delete from whospeakswhat where user = %s", (user,))
         cursor.execute("delete from users where id = %s", (user,))
-        # XXX delete from session and token tables
-        # TODO remove these lines once we move session out of DB
-        cursor.execute("delete from login_tokens where user = %s", (user,))
-        cursor.execute("delete from session_tokens where user = %s", (user,))
         self.cnxn.commit()

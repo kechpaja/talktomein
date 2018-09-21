@@ -5,6 +5,7 @@
 import falcon
 import json
 import re
+from itsdangerous import URLSafeTimedSerializer
 from urllib.parse import unquote
 
 from . import send
@@ -16,6 +17,9 @@ from .pages import langpage
 from .pages import msgpage
 
 class HomeResource(object):
+    def __init__(self, secret):
+        self.login_signer = URLSafeTimedSerializer(secret, salt="login")
+
     def on_get(self, req, resp):
         if "user" in req.context and req.context["user"]:
             db = req.context["db"]
@@ -44,12 +48,11 @@ class HomeResource(object):
                 if address and "email" in data and data["email"]:
                     resp.body = homepage("Username is in use.", True)
                 elif address:
-                    token = req.context["db"].add_token("login", username)
                     send.link(address, 
                               "Login Link",
                               "Click the link to log in",
                               "/",
-                              {"token" : token})
+                              {"token" : self.login_signer.dumps(username)})
                     resp.body = msgpage(
                         "Login Link Sent",
                         "A login link has been sent to %s." % username
@@ -63,12 +66,12 @@ class HomeResource(object):
                     elif not re.match("[^@]+\@([^@.]+.)+\.[^@.]", address):
                         resp.body = homepage("Invalid email. ", True)
                     else:
-                        token = req.context["db"].add_token("login", username)
                         send.link(address,
                                   "Activation Link",
                                   "Click the link to activate your account",
                                   "/",
-                                  {"token" : token, "email" : address})
+                                  {"token" : self.login_signer.dumps(username),
+                                   "email" : address})
                         resp.body = msgpage(
                             "Activation Link Sent",
                             "An activation link has been sent to %s." % username
@@ -89,15 +92,17 @@ class ListResource(object):
 
 
 class DeleteAccountResource(object):
+    def __init__(self, secret):
+        self.login_signer = URLSafeTimedSerializer(secret, salt="login")
+
     def on_get(self, req, resp):
         if "user" in req.context and req.context["user"]:
             user = req.context["user"]
-            token = req.context["db"].add_token("login", req.context["user"])
-            send.link(req.context["db"].get_user_email(req.context["user"]),
+            send.link(req.context["db"].get_user_email(user),
                       "Delete Account Link",
                       "Click the link to continue deleting your account",
                       "/account/delete/confirm",
-                      {"token" : token})
+                      {"token" : self.login_signer.dumps(user)})
             resp.body = msgpage(
                 "Deletion Link Sent",
                 "An account deletion link has been sent to %s." % user
@@ -108,9 +113,11 @@ class DeleteAccountResource(object):
 
 
 class ConfirmDeleteAccountResource(object):
+    def __init__(self, secret):
+        self.login_signer = URLSafeTimedSerializer(secret, "login")
+
     def on_get(self, req, resp):
-        token = req.context["db"].add_token("login", req.context["user"])
-        resp.body = deletepage(token)
+        resp.body = deletepage(self.login_signer.dumps(req.context["user"]))
         resp.content_type = "text/html; charset=utf-8"
 
 
@@ -121,12 +128,16 @@ class FinishDeleteAccountResource(object):
         resp.content_type = "text/html; charset=utf-8"
 
 
+# Get the signing secret
+with open("/home/protected/signing_secret", "rb") as f:
+    secret = f.read()
+
 config_file = "/home/protected/db.conf"
-middleware = [DatabaseMiddleware(config_file), SessionMiddleware()]
+middleware = [DatabaseMiddleware(config_file), SessionMiddleware(secret)]
 app = falcon.API(middleware=middleware)
 
-app.add_route("/account/delete", DeleteAccountResource())
-app.add_route("/account/delete/confirm", ConfirmDeleteAccountResource())
+app.add_route("/account/delete", DeleteAccountResource(secret))
+app.add_route("/account/delete/confirm", ConfirmDeleteAccountResource(secret))
 app.add_route("/account/delete/finish", FinishDeleteAccountResource())
 app.add_route("/{user}", ListResource())
-app.add_route("/", HomeResource())
+app.add_route("/", HomeResource(secret))
