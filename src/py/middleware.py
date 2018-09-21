@@ -55,10 +55,11 @@ class SessionMiddleware(object):
                                 domain="talktomein.com",
                                 path="/",
                                 max_age=0)
+                return
 
             try:
                 req.context["user"] = self.session_signer.loads(
-                    req.cookies[cookiename]
+                    req.cookies[cookiename],
                     max_age=21600
                 )
             except BadSignature:
@@ -69,7 +70,7 @@ class SessionMiddleware(object):
         elif req.path in ["/account/delete/confirm", "/account/delete/finish"]:
             try:
                 req.context["user"] = self.login_signer.loads(
-                    req.params["token"]
+                    req.params["token"],
                     max_age=600
                 )
             except BadSignature:
