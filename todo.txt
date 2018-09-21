@@ -41,4 +41,13 @@ everything at / the way it currently works.
 
 Add section to login emails explaining that user can delete their account if
 they need to, and that if they get a bunch of login links that they didn't
-request it might mean that someone is trying to get into their account. 
+request it might mean that someone is trying to get into their account.
+
+
+
+For security, consider adding user agent information to signed session token.
+
+
+
+We should have a separate endpoint and token salt for adding a user, and
+possibly also for deleting one. 
