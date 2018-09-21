@@ -4,20 +4,9 @@
 
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
-from .db import DatabaseWrapper
+from . import db
 
 cookiename = "talktomein-session"
-
-class DatabaseMiddleware(object):
-    def __init__(self, config_file):
-        self.config_file = config_file
-
-    def process_request(self, req, resp):
-        req.context["db"] = DatabaseWrapper(self.config_file)
-
-    def process_response(self, req, resp, resource, req_succeeded):
-        req.context["db"].disconnect()
-
 
 class SessionMiddleware(object):
     def __init__(self, secret):
@@ -39,8 +28,8 @@ class SessionMiddleware(object):
                 if "email" in req.params and req.params["email"]:
                     # Add user or update user email
                     # TODO we can get rid of this is we create "is confirmed"
-                    # TODO flag in users table of database. 
-                    req.context["db"].add_user(user, req.params["email"])
+                    # TODO flag in users table of database.
+                    db.add_user(user, req.params["email"])
                 return
             except BadSignature:
                 # TODO this might have security implications. Log?
