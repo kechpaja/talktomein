@@ -19,7 +19,6 @@ class DatabaseMiddleware(object):
         req.context["db"].disconnect()
 
 
-# TODO Revisit this entire class. It could use cleanup. 
 class SessionMiddleware(object):
     def __init__(self, secret):
         self.login_signer = URLSafeTimedSerializer(secret, salt="login")
@@ -27,13 +26,6 @@ class SessionMiddleware(object):
 
     def process_request(self, req, resp):
         if req.path in ["/", "/account/delete"]:
-            def unset_cookie():
-                resp.set_cookie(cookiename,
-                                "",
-                                domain="talktomein.com",
-                                path="/",
-                                max_age=0)
-
             try:
                 user = self.login_signer.loads(req.params["token"], 
                                                max_age=600)
@@ -44,13 +36,11 @@ class SessionMiddleware(object):
                                 path="/",
                                 max_age=21600, # XXX 6 hours
                                 http_only=False)
-                del req.params["token"] # Not strictly necessary
                 if "email" in req.params and req.params["email"]:
                     # Add user or update user email
                     # TODO we can get rid of this is we create "is confirmed"
                     # TODO flag in users table of database. 
                     req.context["db"].add_user(user, req.params["email"])
-                    del req.params["email"] # Not strictly necessary
                 return
             except BadSignature:
                 # TODO this might have security implications. Log?
@@ -60,7 +50,11 @@ class SessionMiddleware(object):
 
             # This will work fine even if there's no cookie
             if "action" in req.params and req.params["action"] == "logout":
-                unset_cookie()
+                resp.set_cookie(cookiename, 
+                                "", 
+                                domain="talktomein.com",
+                                path="/",
+                                max_age=0)
 
             try:
                 req.context["user"] = self.session_signer.loads(
@@ -68,7 +62,7 @@ class SessionMiddleware(object):
                     max_age=21600
                 )
             except BadSignature:
-                unset_cookie() # TODO log for security purposes
+                pass # TODO log for security purposes
             except (SignatureExpired, KeyError):
                 pass # Expired session or no cookie
 
@@ -78,7 +72,6 @@ class SessionMiddleware(object):
                     req.params["token"]
                     max_age=600
                 )
-                del req.params["token"]
             except BadSignature:
                 raise falcon.HTTPMovedPermanently("/") # TODO again,red flag
             except (SignatureExpired, KeyError):
