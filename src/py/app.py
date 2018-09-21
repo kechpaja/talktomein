@@ -9,7 +9,7 @@ from itsdangerous import URLSafeTimedSerializer
 from urllib.parse import unquote
 
 from . import send
-from .middleware import DatabaseMiddleware
+from .db import DatabaseWrapper
 from .middleware import SessionMiddleware
 from .pages import deletepage
 from .pages import homepage
@@ -17,12 +17,13 @@ from .pages import langpage
 from .pages import msgpage
 
 class HomeResource(object):
-    def __init__(self, secret):
+    def __init__(self, secret, db_config_file):
         self.login_signer = URLSafeTimedSerializer(secret, salt="login")
+        self.db_config_file = db_config_file
 
     def on_get(self, req, resp):
         if "user" in req.context and req.context["user"]:
-            db = req.context["db"]
+            db = DatabaseWrapper(self.db_config_file)
             user = req.context["user"]
             resp.body = langpage(db.user_langs(user), user, db.all_langs())
         else:
@@ -36,7 +37,8 @@ class HomeResource(object):
             for l in data:
                 if data[l] not in ["A", "B", "C"]:
                     del data[l]
-            req.context["db"].update_langs(req.context["user"], data)
+            db = DatabaseWrapper(self.db_config_file)
+            db.update_langs(req.context["user"], data)
             resp.body = "{\"ok\" : true}"
         else:
             # Form submission to send login link
@@ -44,7 +46,8 @@ class HomeResource(object):
             data = dict(tuple(f.split("=")) for f in reqbody.split("&"))
             if "username" in data and data["username"]:
                 username = data["username"]
-                address = req.context["db"].get_user_email(username)
+                db = DatabaseWrapper(self.db_config_file)
+                address = db.get_user_email(username)
                 if address and "email" in data and data["email"]:
                     resp.body = homepage("Username is in use.", True)
                 elif address:
@@ -85,20 +88,26 @@ class HomeResource(object):
 
 
 class ListResource(object):
+    def __init__(self, db_config_file):
+        self.db_config_file = db_config_file
+
     def on_get(self, req, resp, user):
-        resp.body = langpage(req.context["db"].user_langs(user), user)
+        db = DatabaseWrapper(self.db_config_file)
+        resp.body = langpage(db.user_langs(user), user)
         resp.content_type = "text/html; charset=utf-8"
         resp.status = falcon.HTTP_200
 
 
 class DeleteAccountResource(object):
-    def __init__(self, secret):
+    def __init__(self, secret, db_config_file):
         self.login_signer = URLSafeTimedSerializer(secret, salt="login")
+        self.db_config_file = db_config_file
 
     def on_get(self, req, resp):
         if "user" in req.context and req.context["user"]:
             user = req.context["user"]
-            send.link(req.context["db"].get_user_email(user),
+            db = DatabaseWrapper(self.db_config_file)
+            send.link(db.get_user_email(user),
                       "Delete Account Link",
                       "Click the link to continue deleting your account",
                       "/account/delete/confirm",
@@ -122,8 +131,12 @@ class ConfirmDeleteAccountResource(object):
 
 
 class FinishDeleteAccountResource(object):
+    def __init__(self, db_config_file):
+        self.db_config_file = db_config_file
+
     def on_get(self, req, resp):
-        req.context["db"].delete_user(req.context["user"])
+        db = DatabaseWrapper(self.db_config_file)
+        db.delete_user(req.context["user"])
         resp.body = msgpage("Account Deleted", "Your account has been deleted.")
         resp.content_type = "text/html; charset=utf-8"
 
@@ -133,11 +146,10 @@ with open("/home/protected/signing_secret", "rb") as f:
     secret = f.read()
 
 config_file = "/home/protected/db.conf"
-middleware = [DatabaseMiddleware(config_file), SessionMiddleware(secret)]
-app = falcon.API(middleware=middleware)
+app = falcon.API(middleware=[SessionMiddleware(secret)])
 
-app.add_route("/account/delete", DeleteAccountResource(secret))
+app.add_route("/account/delete", DeleteAccountResource(secret, config_file))
 app.add_route("/account/delete/confirm", ConfirmDeleteAccountResource(secret))
-app.add_route("/account/delete/finish", FinishDeleteAccountResource())
-app.add_route("/{user}", ListResource())
-app.add_route("/", HomeResource(secret))
+app.add_route("/account/delete/finish",FinishDeleteAccountResource(config_file))
+app.add_route("/{user}", ListResource(config_file))
+app.add_route("/", HomeResource(secret, config_file))
