@@ -4,7 +4,7 @@
 
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
-from .db import DatabaseWrapper
+from . import db
 
 cookiename = "talktomein-session"
 
@@ -29,8 +29,6 @@ class SessionMiddleware(object):
                     # Add user or update user email
                     # TODO we can get rid of this is we create "is confirmed"
                     # TODO flag in users table of database.
-                    # TODO Update DB so we don't need to create it here.
-                    db = DatabaseWrapper("/home/protected/db.conf")
                     db.add_user(user, req.params["email"])
                 return
             except BadSignature:
