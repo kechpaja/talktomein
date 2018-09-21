@@ -53,6 +53,4 @@ class DatabaseWrapper(object):
         cursor = self.cnxn.cursor()
         cursor.execute("delete from whospeakswhat where user = %s", (user,))
         cursor.execute("delete from users where id = %s", (user,))
-        cursor.execute("delete from login_tokens where user = %s", (user,))
-        cursor.execute("delete from session_tokens where user = %s", (user,))
         self.cnxn.commit()
