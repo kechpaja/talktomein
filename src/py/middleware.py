@@ -14,7 +14,7 @@ class SessionMiddleware(object):
         self.session_signer = URLSafeTimedSerializer(secret, salt="session")
 
     def process_request(self, req, resp):
-        if req.path in ["/", "/account/delete"]:
+        if req.path in ["/", "/account/delete", "/update"]:
             try:
                 user = self.login_signer.loads(req.params["token"], 
                                                max_age=600)

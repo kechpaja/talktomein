@@ -53,7 +53,7 @@
             langs[row.id] = row.className; // TODO does this work?
         }
 
-        fetch("/", {
+        fetch("/update", {
             method: "POST",
             credentials: "same-origin",
             headers: {

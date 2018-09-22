@@ -30,57 +30,62 @@ class HomeResource(object):
         resp.status = falcon.HTTP_200
 
     def on_post(self, req, resp):
-        if "user" in req.context and req.context["user"]:
+        # Form submission to send login link
+        reqbody = req.stream.read().decode("utf-8")
+        data = dict(tuple(f.split("=")) for f in reqbody.split("&"))
+        if "username" in data and data["username"]:
+            username = data["username"]
+            address = db.get_user_email(username)
+            if address and "email" in data and data["email"]:
+                resp.body = homepage("Username is in use.", True)
+            elif address:
+                send.link(address, 
+                          "Login Link",
+                          "Click the link to log in",
+                          "/",
+                          {"token" : self.login_signer.dumps(username)})
+                resp.body = msgpage(
+                    "Login Link Sent",
+                    "A login link has been sent to %s." % username
+                )
+            elif "email" in data and data["email"]:
+                address = unquote(data["email"])
+                banned = ["login", "logout", "contact", "about", "api",
+                          "account", "accounts", "blog"]
+                if not re.match("\w+", username) or username in banned:
+                    resp.body = homepage("Invalid username. ", True)
+                elif not re.match("[^@]+\@([^@.]+.)+\.[^@.]", address):
+                    resp.body = homepage("Invalid email. ", True)
+                else:
+                    send.link(address,
+                              "Activation Link",
+                              "Click the link to activate your account",
+                              "/",
+                              {"token" : self.login_signer.dumps(username),
+                               "email" : address})
+                    resp.body = msgpage(
+                        "Activation Link Sent",
+                        "An activation link has been sent to %s." % username
+                    )
+            else:
+                resp.body = homepage("Username not found.")
+        else:
+            resp.body = homepage()
+        resp.content_type = "text/html; charset=utf-8"
+        resp.status = falcon.HTTP_200
+
+
+class UpdateResource(object):
+    def on_post(self, req, resp):
+        try:
             data = json.loads(req.stream.read().decode("utf-8"))
             for l in data:
                 if data[l] not in ["A", "B", "C"]:
                     del data[l]
             db.update_langs(req.context["user"], data)
             resp.body = "{\"ok\" : true}"
-        else:
-            # Form submission to send login link
-            reqbody = req.stream.read().decode("utf-8")
-            data = dict(tuple(f.split("=")) for f in reqbody.split("&"))
-            if "username" in data and data["username"]:
-                username = data["username"]
-                address = db.get_user_email(username)
-                if address and "email" in data and data["email"]:
-                    resp.body = homepage("Username is in use.", True)
-                elif address:
-                    send.link(address, 
-                              "Login Link",
-                              "Click the link to log in",
-                              "/",
-                              {"token" : self.login_signer.dumps(username)})
-                    resp.body = msgpage(
-                        "Login Link Sent",
-                        "A login link has been sent to %s." % username
-                    )
-                elif "email" in data and data["email"]:
-                    address = unquote(data["email"])
-                    banned = ["login", "logout", "contact", "about", "api",
-                              "account", "accounts", "blog"]
-                    if not re.match("\w+", username) or username in banned:
-                        resp.body = homepage("Invalid username. ", True)
-                    elif not re.match("[^@]+\@([^@.]+.)+\.[^@.]", address):
-                        resp.body = homepage("Invalid email. ", True)
-                    else:
-                        send.link(address,
-                                  "Activation Link",
-                                  "Click the link to activate your account",
-                                  "/",
-                                  {"token" : self.login_signer.dumps(username),
-                                   "email" : address})
-                        resp.body = msgpage(
-                            "Activation Link Sent",
-                            "An activation link has been sent to %s." % username
-                        )
-                else:
-                    resp.body = homepage("Username not found.")
-            else:
-                resp.body = homepage()
-            resp.content_type = "text/html; charset=utf-8"
-        resp.status = falcon.HTTP_200
+        except KeyError:
+            raise falcon.HTTPForbidden()
 
 
 class ListResource(object):
@@ -136,5 +141,6 @@ app = falcon.API(middleware=[SessionMiddleware(secret)])
 app.add_route("/account/delete", DeleteAccountResource(secret))
 app.add_route("/account/delete/confirm", ConfirmDeleteAccountResource(secret))
 app.add_route("/account/delete/finish", FinishDeleteAccountResource())
+app.add_route("/update", UpdateResource())
 app.add_route("/{user}", ListResource())
 app.add_route("/", HomeResource(secret))
