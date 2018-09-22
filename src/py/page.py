@@ -70,10 +70,3 @@ def homepage(failmsg=None, newacct=False):
             <script type="text/javascript" src="/js/home.js"></script>'''
     body = body % (("<p class='failmsg'>%s</p>" % failmsg) if failmsg else "")
     return generalpage(title, body, ["general.css"])
-
-def deletepage(token):
-    body = "<p>Are you sure you want to delete your account? "
-    body += "This action is not reversible.</p>"
-    body += "<a id=\"deleteacct\" href=\"/account/delete/finish?token=%s\">"
-    body += "Delete My Account</a>"
-    return generalpage("Confirm Account Deletion", body % token,["general.css"])

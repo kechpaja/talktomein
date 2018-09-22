@@ -12,7 +12,6 @@ from . import db
 from . import pages
 from . import send
 from .middleware import SessionMiddleware
-from .page import deletepage
 from .page import homepage
 from .page import langpage
 
@@ -112,7 +111,8 @@ class ConfirmDeleteAccountResource(object):
         self.login_signer = URLSafeTimedSerializer(secret, "login")
 
     def on_get(self, req, resp):
-        resp.body = deletepage(self.login_signer.dumps(req.context["user"]))
+        token = self.login_signer.dumps(req.context["user"])
+        resp.body = pages.confirm_delete_account(token)
         resp.content_type = "text/html; charset=utf-8"
 
 
