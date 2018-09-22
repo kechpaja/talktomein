@@ -21,7 +21,9 @@ class HomeResource(object):
     def on_get(self, req, resp):
         if "user" in req.context and req.context["user"]:
             user = req.context["user"]
-            resp.body = langpage(db.user_langs(user), user, db.all_langs())
+            resp.body = pages.update_languages(db.user_langs(user), 
+                                               user, 
+                                               db.all_langs())
         else:
             resp.body = pages.home()
         resp.content_type = "text/html; charset=utf-8"
@@ -82,7 +84,7 @@ class UpdateResource(object):
 
 class ListResource(object):
     def on_get(self, req, resp, user):
-        resp.body = langpage(db.user_langs(user), user)
+        resp.body = pages.display_languages(db.user_langs(user), user)
         resp.content_type = "text/html; charset=utf-8"
         resp.status = falcon.HTTP_200
 
