@@ -20,18 +20,6 @@ Add talktomein.com domain to Zoho mail account, if possible
 Make it look like emails from my site come from there
 
 
-
-Add some sort of terms and conditions? Or at least explain that by adding their
-data, they consent to it being stored in my DB and shared publicly, and that
-they can delete their account at any time.
-
-Say that emails will only be used to performs logins, as well as possibly
-sending out technical emails if necessary. Perhaps allow for joining newsletter
-and non-site-related mailing lists?
-
-Email will never be shared with third parties. 
-
-
 Contact page?
 
 
@@ -49,10 +37,15 @@ For security, consider adding user agent information to signed session token.
 
 
 
-We should have a separate endpoint and token salt for adding a user, and
-possibly also for deleting one.
+We should have a separate endpoint and token salt for deleting a user. 
 
 
 Currently, we don't log the user out when we send a deletion link. However,
 perhaps we should. Perhaps we should require that the user not be logged in
 when they delete their account. 
+
+
+
+Actually do something with permission check box data
+
+Point out to user that they can delete their data at any time. 

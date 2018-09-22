@@ -16,25 +16,21 @@ class SessionMiddleware(object):
     def unset_cookie(self, rsp):
         rsp.set_cookie(cookiename,"",domain="talktomein.com",path="/",max_age=0)
 
+    def set_cookie(self, req, resp):
+        resp.set_cookie(cookiename,
+                        self.session_signer.dumps(req.context["user"]),
+                        domain="talktomein.com",
+                        path="/",
+                        max_age=21600, # XXX 6 hours
+                        http_only=False)
+
     def process_request(self, req, resp):
         if req.path in ["/", "/account/delete", "/update"]:
             try:
                 user = self.login_signer.loads(req.params["token"], 
                                                max_age=600)
                 req.context["user"] = user
-                resp.set_cookie(cookiename,
-                                self.session_signer.dumps(user),
-                                domain="talktomein.com",
-                                path="/",
-                                max_age=21600, # XXX 6 hours
-                                http_only=False)
-                if "email" in req.params and req.params["email"]:
-                    # Add user or update user email
-                    # TODO we can get rid of this is we create "is confirmed"
-                    # TODO flag in users table of database.
-                    # TODO only add user if user isn't already there. 
-                    # TODO let's fix this later though. 
-                    db.add_user(user, req.params["email"])
+                self.set_cookie(req, resp)
                 return
             except BadSignature:
                 # TODO this might have security implications. Log?
@@ -71,3 +67,6 @@ class SessionMiddleware(object):
     def process_response(self, req, resp, resource, req_succeeded):
         if req.path == "/account/delete/finish" and req_succeeded:
             self.unset_cookie(resp)
+
+        elif req.path == "/account/create/finish" and req_succeeded:
+            self.set_cookie(req, resp)
