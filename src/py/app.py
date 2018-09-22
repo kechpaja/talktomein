@@ -40,7 +40,7 @@ class HomeResource(object):
                           "Login Link",
                           "Click the link to log in",
                           "/",
-                          {"token" : self.login_signer.dumps(username)})
+                          self.login_signer.dumps(username))
                 resp.body = pages.message.login_link_sent(username) 
             else:
                 resp.body = pages.home("Username not found.")
@@ -96,10 +96,8 @@ class CreateAccountResource(object):
                           "Activation Link",
                           "Click the link to activate your account",
                           "/account/create/finish",
-                          {"token" : self.create_signer.dumps(
-                              {"username" : username,
-                               "email" : email}
-                          )})
+                          self.create_signer.dumps({"username" : username,
+                                                    "email" : email}))
                 resp.body = pages.message.activation_link_sent(username)
             resp.content_type = "text/html; charset=utf-8"
         else:
@@ -137,7 +135,7 @@ class DeleteAccountResource(object):
                       "Delete Account Link",
                       "Click the link to continue deleting your account",
                       "/account/delete/confirm",
-                      {"token" : self.login_signer.dumps(user)})
+                      self.login_signer.dumps(user))
             resp.body = pages.message.deletion_link_sent(user)
             resp.content_type = "text/html; charset=utf-8"
         else:
