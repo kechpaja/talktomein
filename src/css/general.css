@@ -27,7 +27,7 @@ button {
 
 body > button, form > button, form > input {
     width: 100%;
-    padding: 0.3em 0 0.3em 0;
+    padding: 0.3em 0.2em 0.3em 0.2em;
 }
 
 .C {
@@ -64,8 +64,16 @@ body > button, form > button, form > input {
 }
 
 #newacct {
+    display: block;
+    border: 0;
+    font-size: inherit;
+    width: 100%;
+    padding: 0.3em 0 0.3em 0;
     background-color: #0000ff;
     color: #ffffff;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 0.4em;
 }
 
 #deleteacct {

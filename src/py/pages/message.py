@@ -17,6 +17,10 @@ def activation_link_sent(username):
     return message("Activation Link Sent",
                    "An activation link has been sent to %s." % username)
 
+def account_activated():
+    return message("Account Activated",
+                   "Your account has been successfully activated.")
+
 def deletion_link_sent(username):
     return message("Deletion Link Sent",
                    "An account deletion link has been sent to %s." % username)
