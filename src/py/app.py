@@ -12,7 +12,6 @@ from . import db
 from . import pages
 from . import send
 from .middleware import SessionMiddleware
-from .page import langpage
 
 class HomeResource(object):
     def __init__(self, secret):

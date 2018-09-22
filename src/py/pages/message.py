@@ -19,7 +19,7 @@ def activation_link_sent(username):
 
 def deletion_link_sent(username):
     return message("Deletion Link Sent",
-                   "An account deletion link has been sent to %s." & username)
+                   "An account deletion link has been sent to %s." % username)
 
 def account_deleted():
     return message("Account Deleted", "Your account has been deleted.")

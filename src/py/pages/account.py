@@ -11,7 +11,7 @@ deletefmt = '''
     Are you sure you want to delete your account?
     This action is not reversible.
 </p>
-<a td="deleteacct" href="/account/delete/finish?token=%s">
+<a id="deleteacct" href="/account/delete/finish?token=%s">
     Delete My Account
 </a>
 '''
