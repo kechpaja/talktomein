@@ -71,10 +71,6 @@ def homepage(failmsg=None, newacct=False):
     body = body % (("<p class='failmsg'>%s</p>" % failmsg) if failmsg else "")
     return generalpage(title, body, ["general.css"])
 
-def msgpage(title, msg):
-    msgfmt = "<p>%s</p><p><a href=\"/\">Home</a></p>"
-    return generalpage(title, msgfmt % msg, ["general.css"])
-
 def deletepage(token):
     body = "<p>Are you sure you want to delete your account? "
     body += "This action is not reversible.</p>"
