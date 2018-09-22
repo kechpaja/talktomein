@@ -50,4 +50,9 @@ For security, consider adding user agent information to signed session token.
 
 
 We should have a separate endpoint and token salt for adding a user, and
-possibly also for deleting one. 
+possibly also for deleting one.
+
+
+Currently, we don't log the user out when we send a deletion link. However,
+perhaps we should. Perhaps we should require that the user not be logged in
+when they delete their account. 

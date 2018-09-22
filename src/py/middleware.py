@@ -13,6 +13,9 @@ class SessionMiddleware(object):
         self.login_signer = URLSafeTimedSerializer(secret, salt="login")
         self.session_signer = URLSafeTimedSerializer(secret, salt="session")
 
+    def unset_cookie(self, rsp):
+        rsp.set_cookie(cookiename,"",domain="talktomein.com",path="/",max_age=0)
+
     def process_request(self, req, resp):
         if req.path in ["/", "/account/delete", "/update"]:
             try:
@@ -29,6 +32,8 @@ class SessionMiddleware(object):
                     # Add user or update user email
                     # TODO we can get rid of this is we create "is confirmed"
                     # TODO flag in users table of database.
+                    # TODO only add user if user isn't already there. 
+                    # TODO let's fix this later though. 
                     db.add_user(user, req.params["email"])
                 return
             except BadSignature:
@@ -39,11 +44,7 @@ class SessionMiddleware(object):
 
             # This will work fine even if there's no cookie
             if "action" in req.params and req.params["action"] == "logout":
-                resp.set_cookie(cookiename, 
-                                "", 
-                                domain="talktomein.com",
-                                path="/",
-                                max_age=0)
+                self.unset_cookie(resp)
                 return
 
             try:
@@ -66,3 +67,7 @@ class SessionMiddleware(object):
                 raise falcon.HTTPMovedPermanently("/") # TODO again,red flag
             except (SignatureExpired, KeyError):
                 raise falcon.HTTPMovedPermanently("/") # TODO msg page?
+
+    def process_response(self, req, resp, resource, req_succeeded):
+        if req.path == "/account/delete/finish" and req_succeeded:
+            self.unset_cookie(resp)
