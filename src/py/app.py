@@ -12,7 +12,6 @@ from . import db
 from . import pages
 from . import send
 from .middleware import SessionMiddleware
-from .page import homepage
 from .page import langpage
 
 class HomeResource(object):
@@ -24,7 +23,7 @@ class HomeResource(object):
             user = req.context["user"]
             resp.body = langpage(db.user_langs(user), user, db.all_langs())
         else:
-            resp.body = homepage()
+            resp.body = pages.home()
         resp.content_type = "text/html; charset=utf-8"
         resp.status = falcon.HTTP_200
 
@@ -36,7 +35,7 @@ class HomeResource(object):
             username = data["username"]
             address = db.get_user_email(username)
             if address and "email" in data and data["email"]:
-                resp.body = homepage("Username is in use.", True)
+                resp.body = pages.home("Username is in use.", True)
             elif address:
                 send.link(address, 
                           "Login Link",
@@ -49,9 +48,9 @@ class HomeResource(object):
                 banned = ["login", "logout", "contact", "about", "api",
                           "account", "accounts", "blog"]
                 if not re.match("\w+", username) or username in banned:
-                    resp.body = homepage("Invalid username. ", True)
+                    resp.body = pages.home("Invalid username. ", True)
                 elif not re.match("[^@]+\@([^@.]+.)+\.[^@.]", address):
-                    resp.body = homepage("Invalid email. ", True)
+                    resp.body = pages.home("Invalid email. ", True)
                 else:
                     send.link(address,
                               "Activation Link",
@@ -61,9 +60,9 @@ class HomeResource(object):
                                "email" : address})
                     resp.body = pages.message.activation_link_sent(username)
             else:
-                resp.body = homepage("Username not found.")
+                resp.body = pages.home("Username not found.")
         else:
-            resp.body = homepage()
+            resp.body = pages.home()
         resp.content_type = "text/html; charset=utf-8"
         resp.status = falcon.HTTP_200
 
