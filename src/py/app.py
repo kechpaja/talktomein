@@ -147,15 +147,29 @@ class ConfirmDeleteAccountResource(object):
         self.login_signer = URLSafeTimedSerializer(secret, "login")
 
     def on_get(self, req, resp):
-        token = self.login_signer.dumps(req.context["user"])
-        resp.body = pages.confirm_delete_account(token)
-        resp.content_type = "text/html; charset=utf-8"
+        try:
+            token = self.login_signer.dumps(req.context["user"])
+            resp.body = pages.confirm_delete_account(token)
+            resp.content_type = "text/html; charset=utf-8"
+        except KeyError:
+            raise falcon.HTTPMovedPermanently("/")
 
 
 class FinishDeleteAccountResource(object):
     def on_get(self, req, resp):
-        db.delete_user(req.context["user"])
-        resp.body = pages.message.account_deleted()
+        try:
+            db.delete_user(req.context["user"])
+            req.context["user"] = ""
+            resp.body = pages.message.account_deleted()
+            resp.content_type = "text/html; charset=utf-8"
+        except KeyError:
+            raise falcon.HTTPMovedPermanently("/")
+
+
+class LogoutResource(object):
+    def on_get(self, req, resp):
+        req.context["user"] = ""
+        resp.body = pages.message.logout()
         resp.content_type = "text/html; charset=utf-8"
 
 
@@ -170,6 +184,7 @@ app.add_route("/account/create/finish", FinishCreateAccountResource(secret))
 app.add_route("/account/delete", DeleteAccountResource(secret))
 app.add_route("/account/delete/confirm", ConfirmDeleteAccountResource(secret))
 app.add_route("/account/delete/finish", FinishDeleteAccountResource())
+app.add_route("/logout", LogoutResource())
 app.add_route("/update", UpdateResource())
 app.add_route("/{user}", ListResource())
 app.add_route("/", HomeResource(secret))
