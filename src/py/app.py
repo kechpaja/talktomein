@@ -8,13 +8,10 @@ import re
 from itsdangerous import URLSafeTimedSerializer
 from urllib.parse import unquote
 
-from . import send
 from . import db
+from . import pages
+from . import send
 from .middleware import SessionMiddleware
-from .pages import deletepage
-from .pages import homepage
-from .pages import langpage
-from .pages import msgpage
 
 class HomeResource(object):
     def __init__(self, secret):
@@ -23,9 +20,11 @@ class HomeResource(object):
     def on_get(self, req, resp):
         if "user" in req.context and req.context["user"]:
             user = req.context["user"]
-            resp.body = langpage(db.user_langs(user), user, db.all_langs())
+            resp.body = pages.update_languages(db.user_langs(user), 
+                                               user, 
+                                               db.all_langs())
         else:
-            resp.body = homepage()
+            resp.body = pages.home()
         resp.content_type = "text/html; charset=utf-8"
         resp.status = falcon.HTTP_200
 
@@ -37,25 +36,22 @@ class HomeResource(object):
             username = data["username"]
             address = db.get_user_email(username)
             if address and "email" in data and data["email"]:
-                resp.body = homepage("Username is in use.", True)
+                resp.body = pages.home("Username is in use.", True)
             elif address:
                 send.link(address, 
                           "Login Link",
                           "Click the link to log in",
                           "/",
                           {"token" : self.login_signer.dumps(username)})
-                resp.body = msgpage(
-                    "Login Link Sent",
-                    "A login link has been sent to %s." % username
-                )
+                resp.body = pages.message.login_link_sent(username)
             elif "email" in data and data["email"]:
                 address = unquote(data["email"])
                 banned = ["login", "logout", "contact", "about", "api",
                           "account", "accounts", "blog"]
                 if not re.match("\w+", username) or username in banned:
-                    resp.body = homepage("Invalid username. ", True)
+                    resp.body = pages.home("Invalid username. ", True)
                 elif not re.match("[^@]+\@([^@.]+.)+\.[^@.]", address):
-                    resp.body = homepage("Invalid email. ", True)
+                    resp.body = pages.home("Invalid email. ", True)
                 else:
                     send.link(address,
                               "Activation Link",
@@ -63,14 +59,11 @@ class HomeResource(object):
                               "/",
                               {"token" : self.login_signer.dumps(username),
                                "email" : address})
-                    resp.body = msgpage(
-                        "Activation Link Sent",
-                        "An activation link has been sent to %s." % username
-                    )
+                    resp.body = pages.message.activation_link_sent(username)
             else:
-                resp.body = homepage("Username not found.")
+                resp.body = pages.home("Username not found.")
         else:
-            resp.body = homepage()
+            resp.body = pages.home()
         resp.content_type = "text/html; charset=utf-8"
         resp.status = falcon.HTTP_200
 
@@ -90,7 +83,7 @@ class UpdateResource(object):
 
 class ListResource(object):
     def on_get(self, req, resp, user):
-        resp.body = langpage(db.user_langs(user), user)
+        resp.body = pages.display_languages(db.user_langs(user), user)
         resp.content_type = "text/html; charset=utf-8"
         resp.status = falcon.HTTP_200
 
@@ -107,10 +100,7 @@ class DeleteAccountResource(object):
                       "Click the link to continue deleting your account",
                       "/account/delete/confirm",
                       {"token" : self.login_signer.dumps(user)})
-            resp.body = msgpage(
-                "Deletion Link Sent",
-                "An account deletion link has been sent to %s." % user
-            )
+            resp.body = pages.message.deletion_link_sent(user)
             resp.content_type = "text/html; charset=utf-8"
         else:
             raise falcon.HTTPMovedPermanently("/")
@@ -121,14 +111,15 @@ class ConfirmDeleteAccountResource(object):
         self.login_signer = URLSafeTimedSerializer(secret, "login")
 
     def on_get(self, req, resp):
-        resp.body = deletepage(self.login_signer.dumps(req.context["user"]))
+        token = self.login_signer.dumps(req.context["user"])
+        resp.body = pages.confirm_delete_account(token)
         resp.content_type = "text/html; charset=utf-8"
 
 
 class FinishDeleteAccountResource(object):
     def on_get(self, req, resp):
         db.delete_user(req.context["user"])
-        resp.body = msgpage("Account Deleted", "Your account has been deleted.")
+        resp.body = pages.message.account_deleted()
         resp.content_type = "text/html; charset=utf-8"
 
 
