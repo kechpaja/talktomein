@@ -49,3 +49,10 @@ when they delete their account.
 Actually do something with permission check box data
 
 Point out to user that they can delete their data at any time. 
+
+
+Add "analytics" as something data will be used for?
+
+
+Change deletion flow so that confirmation is shown immediately, and delete link
+does the actual deletion. 
