@@ -28,24 +28,16 @@ def one_row(lang, has_remove_button=False):
                                        else "<td></td><td></td><td></td>")
 
 
-selectorfmt = '''
-<select id="add">
-    <option value="">-</option>
-    %s
-</select>
-'''
-
 optionfmt = '<option value=\"%s\">%s</option>'
-add_buttons = '''
-<td><button class="add-button">A</button></td>
-<td><button class="add-button">B</button></td>
-<td><button class="add-button">C</button></td>
+addfmt = '''
+<tr class="add-row">
+    <td class="level">?</td>
+    <td><select id="add"><option value="">-</option>%s</select></td>
+    <td><button class="add-button">A</button></td>
+    <td><button class="add-button">B</button></td>
+    <td><button class="add-button">C</button></td>
+</tr>
 '''
-
-def add_row(level, all_langs):
-    selector = selectorfmt % "".join(optionfmt % l for l in all_langs)
-    return rowfmt.format("", "<td>%s</td>" % selector, level, add_buttons)
-
 
 def table_innards(langs, all_langs=None):
     blocks = []
@@ -54,7 +46,7 @@ def table_innards(langs, all_langs=None):
         blocks.append(row)
     acc = "".join([b for b in blocks if len(b) > 0])
     if all_langs:
-        acc += add_row("V", all_langs)
+        acc += (addfmt % "".join(optionfmt % l for l in all_langs))
     return acc
 
 

@@ -19,6 +19,10 @@
         button.onclick = function () {
             var lang = document.getElementById("add").value;
 
+            if (!lang) {
+                return; // skip null element in selector
+            }
+
             var langtr = document.createElement("tr");
             langtr.id = lang;
             langtr.className = level;
@@ -40,7 +44,7 @@
 
     var addButtons = document.getElementsByClassName("add-button");
     var levels = ["A", "B", "C"];
-    var buttonBefores = ["V", "A", "B"];
+    var buttonBefores = ["add-row", "A", "B"];
     for (var i = 0; i < addButtons.length; i++) {
         enableAddButton(addButtons[i], levels[i], buttonBefores[i]);
     }

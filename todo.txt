@@ -34,7 +34,7 @@ Create dedicated methods for the different login/auth links
 Allow user to update their email preferences.
 
 
-have only one update row? Auto-save?
+Auto-save?
 
 
 Perhaps use JS filter to allow for an autocompleting list of languages?
@@ -48,5 +48,3 @@ to the list.
 
 
 Styling for new add language button
-
-Code cleanup for new add language button
