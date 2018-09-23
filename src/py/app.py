@@ -14,9 +14,6 @@ from . import send
 from .middleware import SessionMiddleware
 
 class HomeResource(object):
-    def __init__(self, secret):
-        self.login_signer = URLSafeTimedSerializer(secret, salt="login")
-
     def on_get(self, req, resp):
         if "user" in req.context and req.context["user"]:
             user = req.context["user"]
@@ -35,7 +32,7 @@ class HomeResource(object):
         if "username" in data and data["username"]:
             username = data["username"]
             address = db.get_user_email(username)
-            token = self.login_signer.dumps(username)
+            token = login_signer.dumps(username)
             if address:
                 send.link(address, 
                           "Login Link",
@@ -52,12 +49,9 @@ class HomeResource(object):
 
 
 class FinishCreateAccountResource(object):
-    def __init__(self, secret):
-        self.create_signer = URLSafeTimedSerializer(secret, salt="create")
-
     def on_get(self, req, resp):
         try:
-            data = self.create_signer.loads(req.params["token"])
+            data = create_signer.loads(req.params["token"])
             db.add_user(**data)
             req.context["user"] = data["username"]
             resp.body = pages.message.account_activated()
@@ -68,9 +62,6 @@ class FinishCreateAccountResource(object):
 
 
 class CreateAccountResource(object):
-    def __init__(self, secret):
-        self.create_signer = URLSafeTimedSerializer(secret, salt="create")
-
     def on_get(self, req, resp):
         resp.body = pages.create_account()
         resp.content_type = "text/html; charset=utf-8"
@@ -95,7 +86,7 @@ class CreateAccountResource(object):
                           "Activation Link",
                           "Click the link to activate your account",
                           "/account/create/finish",
-                          self.create_signer.dumps({
+                          create_signer.dumps({
                               "username" : username,
                               "email" : email,
                               "permission" : int("permission" in data),
@@ -132,9 +123,6 @@ class ListResource(object):
 
 
 class DeleteAccountResource(object):
-    def __init__(self, secret):
-        self.signer = URLSafeTimedSerializer(secret, salt="delete")
-
     def on_get(self, req, resp):
         if "user" in req.context and req.context["user"]:
             user = req.context["user"]
@@ -142,7 +130,7 @@ class DeleteAccountResource(object):
                       "Delete Account Link",
                       "Click the link to permanently delete your account",
                       "/account/delete/finish",
-                      self.signer.dumps(user))
+                      delete_signer.dumps(user))
             req.context["user"] = "" # Log user out
             resp.body = pages.message.deletion_link_sent(user)
             resp.content_type = "text/html; charset=utf-8"
@@ -160,12 +148,9 @@ class ConfirmDeleteAccountResource(object):
 
 
 class FinishDeleteAccountResource(object):
-    def __init__(self, secret):
-        self.signer = URLSafeTimedSerializer(secret, salt="delete")
-
     def on_get(self, req, resp):
         try:
-            db.delete_user(self.signer.loads(req.params["token"], max_age=600))
+            db.delete_user(delete_signer.loads(req.params["token"],max_age=600))
             req.context["user"] = ""
             resp.body = pages.message.account_deleted()
             resp.content_type = "text/html; charset=utf-8"
@@ -181,12 +166,9 @@ class LogoutResource(object):
 
 
 class FinishLoginResource(object):
-    def __init__(self, secret):
-        self.signer = URLSafeTimedSerializer(secret, salt="login")
-
     def on_get(self, req, resp, token):
         try:
-            req.context["user"] = self.signer.loads(token, max_age=600)
+            req.context["user"] = login_signer.loads(token, max_age=600)
         except (BadSignature, SignatureExpired):
             pass # TODO log security red flags
         raise falcon.HTTPMovedPermanently("/")
@@ -198,20 +180,24 @@ class AccountResource(object):
         resp.content_type = "text/html; charset=utf-8"
 
 
-# Get the signing secret
+# Get the signing secret and create signers
 with open("/home/protected/signing_secret", "rb") as f:
     secret = f.read()
+
+login_signer = URLSafeTimedSerializer(secret, salt="login")
+create_signer = URLSafeTimedSerializer(secret, salt="create")
+delete_signer = URLSafeTimedSerializer(secret, salt="delete")
 
 app = falcon.API(middleware=[SessionMiddleware(secret)])
 
 app.add_route("/account", AccountResource())
-app.add_route("/account/create", CreateAccountResource(secret))
-app.add_route("/account/create/finish", FinishCreateAccountResource(secret))
-app.add_route("/account/delete", DeleteAccountResource(secret))
+app.add_route("/account/create", CreateAccountResource())
+app.add_route("/account/create/finish", FinishCreateAccountResource())
+app.add_route("/account/delete", DeleteAccountResource())
 app.add_route("/account/delete/confirm", ConfirmDeleteAccountResource())
-app.add_route("/account/delete/finish", FinishDeleteAccountResource(secret))
-app.add_route("/account/login/finish/{token}", FinishLoginResource(secret))
+app.add_route("/account/delete/finish", FinishDeleteAccountResource())
+app.add_route("/account/login/finish/{token}", FinishLoginResource())
 app.add_route("/logout", LogoutResource())
 app.add_route("/update", UpdateResource())
 app.add_route("/{user}", ListResource())
-app.add_route("/", HomeResource(secret))
+app.add_route("/", HomeResource())

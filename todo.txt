@@ -42,10 +42,6 @@ Create endpoint for starting the login flow.
 Create dedicated methods for the different login/auth links
 
 
-Create "account" page, and move delete button there.
-
-Add link to account details
-
 Consider restructuring header and stuff.
 
 
