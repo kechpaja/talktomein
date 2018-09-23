@@ -15,11 +15,9 @@
 
 
     // Enable add buttons
-    function enableAddButton(button) {
-        var row = button.parentElement.parentElement;
+    function enableAddButton(button, level, before) {
         button.onclick = function () {
-            var level = row.className;
-            var lang = document.getElementById("add" + level).value;
+            var lang = document.getElementById("add").value;
 
             var langtr = document.createElement("tr");
             langtr.id = lang;
@@ -27,9 +25,11 @@
 
             var inner = "<td class='level'>" + level + "</td>";
             inner += "<td class='language'>" + languages[lang] + "</td>";
+            inner += "<td></td><td></td>"
             inner += "<td><button class='remove-button'>X</button></td></tr>";
             langtr.innerHTML = inner;
 
+            var row = document.getElementsByClassName(before)[0];
             row.parentElement.insertBefore(langtr, row);
             var button = langtr.getElementsByClassName("remove-button")[0];
             enableRemoveButton(button);
@@ -39,8 +39,10 @@
     }
 
     var addButtons = document.getElementsByClassName("add-button");
+    var levels = ["A", "B", "C"];
+    var buttonBefores = ["V", "A", "B"];
     for (var i = 0; i < addButtons.length; i++) {
-        enableAddButton(addButtons[i]);
+        enableAddButton(addButtons[i], levels[i], buttonBefores[i]);
     }
 
 
