@@ -7,9 +7,9 @@ from .base import base
 # TODO localization
 
 rowfmt = '''
-<tr id="{0}" class="{2}">
+<tr{0} class="{2}">
     <td class="level">{2}</td>
-    <td class="language">{1}</td>
+    {1}
     {3}
 </tr>
 '''
@@ -17,8 +17,8 @@ rowfmt = '''
 remove_button = '<td><button class="remove-button">X</button></td>'
 
 def one_row(lang, has_remove_button=False):
-    return rowfmt.format(lang[0], # Code
-                         lang[1], # Name
+    return rowfmt.format(' id="%s"' % lang[0], # Code
+                         '<td class="language">%s</td>' % lang[1], # Name
                          lang[2], # Level
                          remove_button if has_remove_button else "")
 
@@ -35,7 +35,7 @@ add_button = "<td><button class='add-button'>+</button></td>"
 
 def add_row(level, all_langs):
     selector = selectorfmt % (level, "".join(optionfmt % l for l in all_langs))
-    return rowfmt.format("add-%s-tr" % level, selector, level, add_button)
+    return rowfmt.format("", "<td>%s</td>" % selector, level, add_button)
 
 
 def table_innards(langs, all_langs=None):
