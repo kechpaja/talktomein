@@ -40,7 +40,7 @@ class HomeResource(object):
                 send.link(address, 
                           "Login Link",
                           "Click the link to log in",
-                          "/account/login/" + token,
+                          "/account/login/finish/" + token,
                           "")
                 resp.body = pages.message.login_link_sent(username) 
             else:
@@ -174,7 +174,7 @@ class LogoutResource(object):
         resp.content_type = "text/html; charset=utf-8"
 
 
-class PerformLoginResource(object):
+class FinishLoginResource(object):
     def __init__(self, secret):
         self.signer = URLSafeTimedSerializer(secret, salt="login")
 
@@ -198,7 +198,7 @@ app.add_route("/account/create/finish", FinishCreateAccountResource(secret))
 app.add_route("/account/delete", DeleteAccountResource(secret))
 app.add_route("/account/delete/confirm", ConfirmDeleteAccountResource())
 app.add_route("/account/delete/finish", FinishDeleteAccountResource(secret))
-app.add_route("/account/login/{token}", PerformLoginResource(secret))
+app.add_route("/account/login/finish/{token}", FinishLoginResource(secret))
 app.add_route("/logout", LogoutResource())
 app.add_route("/update", UpdateResource())
 app.add_route("/{user}", ListResource())

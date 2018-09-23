@@ -36,7 +36,7 @@ class SessionMiddleware(object):
         if req.path in ["/account/create/finish", "/account/delete/finish"]:
             return # Bypass cookie checker for pages that require token
 
-        if req.path.startswith("/account/login/"):
+        if req.path.startswith("/account/login/finish/"):
             return # Same thing
 
         try:
