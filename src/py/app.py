@@ -74,7 +74,7 @@ class CreateAccountResource(object):
             username = data["username"]
             email = unquote(data["email"])
             banned = ["login", "logout", "contact", "about", "api", "account", 
-                      "accounts", "blog", "update"]
+                      "accounts", "blog", "news", "update"]
             if db.get_user_email(data["username"]):
                 resp.body = pages.create_account("Username is taken")
             elif not re.match("\w+", username) or username in banned:
