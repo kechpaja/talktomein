@@ -3,7 +3,9 @@ Tables:
  () One table of languages, containing the ISO-639 code and the name of that
     language in that language. 
 
- () One table of users, containing a username and email address
+ () One table of users, containing a username and email address, as well as
+    settings information indicating whether that user wants to get the
+    newsletter or marketing emails. 
 
  () One table of users X languages (usernames and ISO-639 codes)
 
@@ -18,17 +20,3 @@ create table whospeakswhat (user varchar(255) not null references users(id), lan
 "Level" in whospeakswhat table currently holds A, B, or C. In the future, we
 may add additional categories, but they probably won't be more than a couple of
 characters long. 
-
-
-session_tokens and login_tokens:
-
-id (varchar), user (varchar), timestamp (datetime)
-
-
-There will probably be a scheduled task to delete old tokens:
-
-create event delete_old_session_tokens on schedule every 1 day on completion preserve do delete from session_tokens where timestamp < now() - interval 1 month;
-
-create event delete_old_login_tokens on schedule every 30 minute on completion preserve do delete from session_tokens where timestamp < now() - interval 30 minute;
-
-
