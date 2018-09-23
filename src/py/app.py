@@ -149,14 +149,16 @@ class ConfirmDeleteAccountResource(object):
 
 class FinishDeleteAccountResource(object):
     def on_get(self, req, resp):
-        try:
-            db.delete_user(delete_signer.loads(req.params["token"],max_age=600))
-            req.context["user"] = ""
-            resp.body = pages.message.account_deleted()
-            resp.content_type = "text/html; charset=utf-8"
-        except (BadSignature, SignatureExpired, KeyError):
-            raise falcon.HTTPMovedPermanently("/")
-
+        if "user" not in req.context or not req.context["user"]:
+            try:
+                db.delete_user(delete_signer.loads(req.params["token"],
+                                                   max_age=600))
+                resp.body = pages.message.account_deleted()
+            except (BadSignature, SignatureExpired, KeyError):
+                raise falcon.HTTPMovedPermanently("/")
+        else:
+            resp.body = pages.message.cannot_delete_when_logged_in()
+        resp.content_type = "text/html; charset=utf-8" 
 
 class LogoutResource(object):
     def on_get(self, req, resp):

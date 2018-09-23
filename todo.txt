@@ -25,11 +25,6 @@ they need to. Unsubscribe link would be a good idea.
 For security, consider adding user agent information to signed session token.
 
 
-
-Perhaps we should require that the user not be logged in when they delete their
-account. 
-
-
 Create endpoint for starting the login flow.
 
 

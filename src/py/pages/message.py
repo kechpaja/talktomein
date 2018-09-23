@@ -29,6 +29,10 @@ def deletion_link_sent(username):
 def account_deleted():
     return message("Account Deleted", "Your account has been deleted.")
 
+def cannot_delete_when_logged_in():
+    return message("Account Deletion Failed",
+                   "You must log out in order to delete your account.")
+
 def logout():
     return message("Logged Out", "You have been logged out.")
 

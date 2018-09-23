@@ -14,17 +14,15 @@ class SessionMiddleware(object):
         self.session_signer = URLSafeTimedSerializer(secret, salt="session")
 
     def process_request(self, req, resp):
-        # Bypass cookie checker for pages that require token
-        if not re.match("/account/[^/]*/finish.*", req.path):
-            try:
-                req.context["user"] = self.session_signer.loads(
-                    req.cookies[cookiename],
-                    max_age=21600
-                )
-            except BadSignature:
-                pass # TODO again,red flag
-            except (SignatureExpired, KeyError):
-                pass # TODO msg page?
+        try:
+            req.context["user"] = self.session_signer.loads(
+                req.cookies[cookiename],
+                max_age=21600
+            )
+        except BadSignature:
+            pass # TODO again,red flag
+        except (SignatureExpired, KeyError):
+            pass # TODO msg page?
 
     def process_response(self, req, resp, resource, req_succeeded):
         if "user" in req.context and req.context["user"]:
