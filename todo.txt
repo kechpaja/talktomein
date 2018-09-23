@@ -23,10 +23,6 @@ Make it look like emails from my site come from there
 Contact page?
 
 
-Start splitting up flows across a number of endpoints, instead of doing
-everything at / the way it currently works. 
-
-
 Add section to login emails explaining that user can delete their account if
 they need to, and that if they get a bunch of login links that they didn't
 request it might mean that someone is trying to get into their account.
@@ -37,12 +33,8 @@ For security, consider adding user agent information to signed session token.
 
 
 
-We should have a separate endpoint and token salt for deleting a user. 
-
-
-Currently, we don't log the user out when we send a deletion link. However,
-perhaps we should. Perhaps we should require that the user not be logged in
-when they delete their account. 
+Perhaps we should require that the user not be logged in when they delete their
+account. 
 
 
 
@@ -54,5 +46,18 @@ Point out to user that they can delete their data at any time.
 Add "analytics" as something data will be used for?
 
 
-Change deletion flow so that confirmation is shown immediately, and delete link
-does the actual deletion. 
+Find a way to distinguish between a page without data, and a page belonging to
+a user who doesn't exist.
+
+
+Create endpoint for starting the login flow.
+
+
+Create dedicated methods for the different login/auth links
+
+
+Create "account" page, and move delete button there.
+
+Add link to account details
+
+Consider restructuring header and stuff. 
