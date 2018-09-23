@@ -6,6 +6,16 @@ from .base import base
 
 # TODO localization of strings
 
+
+indexfmt = '''
+<h3>Account Details</h3>
+<a id="deleteacct" href="/account/delete/confirm">Delete Account</a>
+'''
+
+def index():
+    return base("Account Details", indexfmt, ["general"])
+
+
 delete_text = '''
 <p>
     Are you sure you want to delete your account?

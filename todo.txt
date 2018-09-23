@@ -46,4 +46,7 @@ Create "account" page, and move delete button there.
 
 Add link to account details
 
-Consider restructuring header and stuff. 
+Consider restructuring header and stuff.
+
+
+Allow user to update their email preferences.

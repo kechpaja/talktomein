@@ -55,10 +55,13 @@ def display(langs, user):
     return base(title, body, ["general"])
 
 
-loggedinfmt = '<p>Logged in as %s. <a href="/logout">Logout</a></p>'
+loggedinfmt = '''
+<p>Logged in as <a href="/account">%s</a>. 
+<a href="/logout">Logout</a></p>
+'''
+
 bottomfmt = '''
 <button id="save-button" disabled>Save Changes</button>
-<a id="deleteacct" href="/account/delete/confirm">Delete Account</a>
 <script>
     var languages = {%s};
 </script>

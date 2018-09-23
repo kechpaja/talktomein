@@ -195,12 +195,19 @@ class FinishLoginResource(object):
         # TODO check that this still sets the cookie
 
 
+class AccountResource(object):
+    def on_get(self, req, resp):
+        resp.body = pages.account()
+        resp.content_type = "text/html; charset=utf-8"
+
+
 # Get the signing secret
 with open("/home/protected/signing_secret", "rb") as f:
     secret = f.read()
 
 app = falcon.API(middleware=[SessionMiddleware(secret)])
 
+app.add_route("/account", AccountResource())
 app.add_route("/account/create", CreateAccountResource(secret))
 app.add_route("/account/create/finish", FinishCreateAccountResource(secret))
 app.add_route("/account/delete", DeleteAccountResource(secret))

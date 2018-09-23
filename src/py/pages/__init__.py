@@ -1,3 +1,4 @@
+from .account import index as account
 from .account import confirm_delete as confirm_delete_account
 from .account import create as create_account
 from .home import home as home
