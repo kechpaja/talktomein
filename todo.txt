@@ -36,10 +36,6 @@ Perhaps we should require that the user not be logged in when they delete their
 account. 
 
 
-
-Actually do something with permission check box data
-
-
 Find a way to distinguish between a page without data, and a page belonging to
 a user who doesn't exist.
 

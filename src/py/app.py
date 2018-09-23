@@ -60,7 +60,7 @@ class FinishCreateAccountResource(object):
             data = self.create_signer.loads(req.params["token"])
 
             # TODO check if user is already there
-            db.add_user(data["username"], data["email"])
+            db.add_user(**data)
             req.context["user"] = data["username"]
             resp.body = pages.message.account_activated()
             resp.content_type = "text/html; charset=utf-8"
@@ -97,8 +97,13 @@ class CreateAccountResource(object):
                           "Activation Link",
                           "Click the link to activate your account",
                           "/account/create/finish",
-                          self.create_signer.dumps({"username" : username,
-                                                    "email" : email}))
+                          self.create_signer.dumps({
+                              "username" : username,
+                              "email" : email,
+                              "permission" : int("permission" in data),
+                              "newsletter" : int("newsletter" in data),
+                              "marketing" : int("marketing_emails" in data)
+                          }))
                 resp.body = pages.message.activation_link_sent(username)
             resp.content_type = "text/html; charset=utf-8"
         else:
