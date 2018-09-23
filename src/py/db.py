@@ -51,7 +51,7 @@ def get_user_email(user):
 def add_user(user, email):
     cnxn = MySQLdb.connect(read_default_file=config_file)
     cursor = cnxn.cursor()
-    cursor.execute("insert into users values (%s, %s)", (user, email))
+    cursor.execute("insert ignore into users values (%s, %s)", (user, email))
     cnxn.commit()
     cnxn.close()
 
