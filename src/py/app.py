@@ -5,7 +5,7 @@
 import falcon
 import json
 import re
-from itsdangerous import URLSafeTimedSerializer
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 from urllib.parse import unquote
 
 from . import db
@@ -35,12 +35,13 @@ class HomeResource(object):
         if "username" in data and data["username"]:
             username = data["username"]
             address = db.get_user_email(username)
+            token = self.login_signer.dumps(username)
             if address:
                 send.link(address, 
                           "Login Link",
                           "Click the link to log in",
-                          "/",
-                          self.login_signer.dumps(username))
+                          "/account/login/" + token,
+                          "")
                 resp.body = pages.message.login_link_sent(username) 
             else:
                 resp.body = pages.home("Username not found.")
@@ -126,16 +127,17 @@ class ListResource(object):
 
 class DeleteAccountResource(object):
     def __init__(self, secret):
-        self.login_signer = URLSafeTimedSerializer(secret, salt="login")
+        self.signer = URLSafeTimedSerializer(secret, salt="delete")
 
     def on_get(self, req, resp):
         if "user" in req.context and req.context["user"]:
             user = req.context["user"]
             send.link(db.get_user_email(user),
                       "Delete Account Link",
-                      "Click the link to continue deleting your account",
-                      "/account/delete/confirm",
-                      self.login_signer.dumps(user))
+                      "Click the link to permanently delete your account",
+                      "/account/delete/finish",
+                      self.signer.dumps(user))
+            req.context["user"] = "" # Log user out
             resp.body = pages.message.deletion_link_sent(user)
             resp.content_type = "text/html; charset=utf-8"
         else:
@@ -143,26 +145,25 @@ class DeleteAccountResource(object):
 
 
 class ConfirmDeleteAccountResource(object):
-    def __init__(self, secret):
-        self.login_signer = URLSafeTimedSerializer(secret, "login")
-
     def on_get(self, req, resp):
         try:
-            token = self.login_signer.dumps(req.context["user"])
-            resp.body = pages.confirm_delete_account(token)
+            resp.body = pages.confirm_delete_account()
             resp.content_type = "text/html; charset=utf-8"
         except KeyError:
             raise falcon.HTTPMovedPermanently("/")
 
 
 class FinishDeleteAccountResource(object):
+    def __init__(self, secret):
+        self.signer = URLSafeTimedSerializer(secret, salt="delete")
+
     def on_get(self, req, resp):
         try:
-            db.delete_user(req.context["user"])
+            db.delete_user(self.signer.loads(req.params["token"], max_age=600))
             req.context["user"] = ""
             resp.body = pages.message.account_deleted()
             resp.content_type = "text/html; charset=utf-8"
-        except KeyError:
+        except (BadSignature, SignatureExpired, KeyError):
             raise falcon.HTTPMovedPermanently("/")
 
 
@@ -171,6 +172,19 @@ class LogoutResource(object):
         req.context["user"] = ""
         resp.body = pages.message.logout()
         resp.content_type = "text/html; charset=utf-8"
+
+
+class PerformLoginResource(object):
+    def __init__(self, secret):
+        self.signer = URLSafeTimedSerializer(secret, salt="login")
+
+    def on_get(self, req, resp, token):
+        try:
+            req.context["user"] = self.signer.loads(token, max_age=600)
+        except (BadSignature, SignatureExpired):
+            pass # TODO log security red flags
+        raise falcon.HTTPMovedPermanently("/") 
+        # TODO check that this still sets the cookie
 
 
 # Get the signing secret
@@ -182,8 +196,9 @@ app = falcon.API(middleware=[SessionMiddleware(secret)])
 app.add_route("/account/create", CreateAccountResource(secret))
 app.add_route("/account/create/finish", FinishCreateAccountResource(secret))
 app.add_route("/account/delete", DeleteAccountResource(secret))
-app.add_route("/account/delete/confirm", ConfirmDeleteAccountResource(secret))
-app.add_route("/account/delete/finish", FinishDeleteAccountResource())
+app.add_route("/account/delete/confirm", ConfirmDeleteAccountResource())
+app.add_route("/account/delete/finish", FinishDeleteAccountResource(secret))
+app.add_route("/account/login/{token}", PerformLoginResource(secret))
 app.add_route("/logout", LogoutResource())
 app.add_route("/update", UpdateResource())
 app.add_route("/{user}", ListResource())

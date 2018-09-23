@@ -58,7 +58,7 @@ def display(langs, user):
 loggedinfmt = '<p>Logged in as %s. <a href="/logout">Logout</a></p>'
 bottomfmt = '''
 <button id="save-button" disabled>Save Changes</button>
-<a id="deleteacct" href="/account/delete">Delete Account</a>
+<a id="deleteacct" href="/account/delete/confirm">Delete Account</a>
 <script>
     var languages = {%s};
 </script>

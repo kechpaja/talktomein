@@ -33,29 +33,24 @@ class SessionMiddleware(object):
                         http_only=False)
 
     def process_request(self, req, resp):
-        try:
-            req.context["user"] = self.login_signer.loads(req.params["token"],
-                                                          max_age=600)
-            return
-        except BadSignature:
-            pass # TODO log security red flag
-        except (SignatureExpired, KeyError):
-            pass # Expired session or no token
+        if req.path in ["/account/create/finish", "/account/delete/finish"]:
+            return # Bypass cookie checker for pages that require token
 
-        if req.path not in ["/account/delete/confirm","/account/delete/finish"]:
-            try:
-                req.context["user"] = self.session_signer.loads(
-                    req.cookies[cookiename],
-                    max_age=21600
-                )
-            except BadSignature:
-                pass # TODO again,red flag
-            except (SignatureExpired, KeyError):
-                pass # TODO msg page?
+        if req.path.startswith("/account/login/"):
+            return # Same thing
+
+        try:
+            req.context["user"] = self.session_signer.loads(
+                req.cookies[cookiename],
+                max_age=21600
+            )
+        except BadSignature:
+            pass # TODO again,red flag
+        except (SignatureExpired, KeyError):
+            pass # TODO msg page?
 
     def process_response(self, req, resp, resource, req_succeeded):
-        if req_succeeded:
-            if "user" in req.context and req.context["user"]:
-                self.set_cookie(req, resp)
-            else:
-                self.unset_cookie(req, resp)
+        if "user" in req.context and req.context["user"]:
+            self.set_cookie(req, resp)
+        else:
+            self.unset_cookie(req, resp)
