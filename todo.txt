@@ -35,3 +35,6 @@ Allow user to update their email preferences.
 
 
 have only one update row? Auto-save?
+
+
+Perhaps use JS filter to allow for an autocompleting list of languages?
