@@ -6,13 +6,7 @@ Add borders to add and remove buttons
 
 Add hover and active colors to add and remove buttons
 
-
-
-Perhaps have an add button after each existing language? 
-
 Perhaps delete language when it's added elsewhere?
-
-Dragging and dropping? Or something else?
 
 
 Add talktomein.com domain to Zoho mail account, if possible
@@ -42,7 +36,7 @@ Create endpoint for starting the login flow.
 Create dedicated methods for the different login/auth links
 
 
-Consider restructuring header and stuff.
-
-
 Allow user to update their email preferences.
+
+
+have only one update row? Auto-save?

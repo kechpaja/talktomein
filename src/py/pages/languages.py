@@ -46,22 +46,19 @@ def table_innards(langs, all_langs=None):
     return "".join([b for b in blocks if len(b) > 0]) 
 
 
-framefmt = '<h3>%s</h3>%s<table>%s</table>%s'
+framefmt = '<h3>%s</h3><table>%s</table>%s'
 displaytitlefmt = '%s speaks...'
 
 def display(langs, user):
     title = displaytitlefmt % user
-    body = framefmt % (title, "", table_innards(langs), "")
+    body = framefmt % (title, table_innards(langs), "")
     return base(title, body, ["general"])
 
 
-loggedinfmt = '''
-<p>Logged in as <a href="/account">%s</a>. 
-<a href="/logout">Logout</a></p>
-'''
-
 bottomfmt = '''
 <button id="save-button" disabled>Save Changes</button>
+<p>Logged in as %s.</p>
+<div><a href="/account">Account Details</a><a href="/logout">Logout</a></div>
 <script>
     var languages = {%s};
 </script>
@@ -70,7 +67,7 @@ bottomfmt = '''
 def update(langs, user, all_langs):
     title = "Edit language list" # TODO localize
     body = framefmt % (title,
-                       loggedinfmt % user,
                        table_innards(langs, all_langs),
-                       bottomfmt % ",".join('"%s":"%s"' % l for l in all_langs))
+                       bottomfmt % (user,
+                                    ",".join('"%s":"%s"'%l for l in all_langs)))
     return base(title, body, ["general", "update"], ["scripts"])
