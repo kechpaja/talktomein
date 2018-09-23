@@ -40,11 +40,6 @@ account.
 
 Actually do something with permission check box data
 
-Point out to user that they can delete their data at any time. 
-
-
-Add "analytics" as something data will be used for?
-
 
 Find a way to distinguish between a page without data, and a page belonging to
 a user who doesn't exist.
