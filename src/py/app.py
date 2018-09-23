@@ -125,7 +125,10 @@ class UpdateResource(object):
 
 class ListResource(object):
     def on_get(self, req, resp, user):
-        resp.body = pages.display_languages(db.user_langs(user), user)
+        if db.get_user_email(user):
+            resp.body = pages.display_languages(db.user_langs(user), user)
+        else:
+            resp.body = pages.message.no_such_user(user)
         resp.content_type = "text/html; charset=utf-8"
         resp.status = falcon.HTTP_200
 

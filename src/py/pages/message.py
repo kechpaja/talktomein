@@ -31,3 +31,6 @@ def account_deleted():
 
 def logout():
     return message("Logged Out", "You have been logged out.")
+
+def no_such_user(username):
+    return message("No Such User", 'There is no user "%s".' % username)
