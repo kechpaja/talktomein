@@ -58,8 +58,6 @@ class FinishCreateAccountResource(object):
     def on_get(self, req, resp):
         try:
             data = self.create_signer.loads(req.params["token"])
-
-            # TODO check if user is already there
             db.add_user(**data)
             req.context["user"] = data["username"]
             resp.body = pages.message.account_activated()
@@ -191,8 +189,7 @@ class FinishLoginResource(object):
             req.context["user"] = self.signer.loads(token, max_age=600)
         except (BadSignature, SignatureExpired):
             pass # TODO log security red flags
-        raise falcon.HTTPMovedPermanently("/") 
-        # TODO check that this still sets the cookie
+        raise falcon.HTTPMovedPermanently("/")
 
 
 class AccountResource(object):
