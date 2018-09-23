@@ -24,8 +24,7 @@ Contact page?
 
 
 Add section to login emails explaining that user can delete their account if
-they need to, and that if they get a bunch of login links that they didn't
-request it might mean that someone is trying to get into their account.
+they need to. Unsubscribe link would be a good idea. 
 
 
 
