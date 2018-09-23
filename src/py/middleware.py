@@ -2,6 +2,7 @@
 # Middleware for Session Management                                            #
 ################################################################################
 
+import re
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
 from . import db
