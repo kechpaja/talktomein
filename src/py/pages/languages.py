@@ -48,10 +48,11 @@ def table_innards(langs, all_langs=None):
 
 framefmt = '<h3>%s</h3><table>%s</table>%s'
 displaytitlefmt = '%s speaks...'
+newacctlink = '<a href="/account/create">Create your own language list</a>'
 
 def display(langs, user):
     title = displaytitlefmt % user
-    body = framefmt % (title, table_innards(langs), "")
+    body = framefmt % (title, table_innards(langs), newacctlink)
     return base(title, body, ["general"])
 
 

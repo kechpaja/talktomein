@@ -36,3 +36,6 @@ Perhaps use JS filter to allow for an autocompleting list of languages?
 
 Also consider allowing user to tab through levels when adding a language, and
 show it moving through the level lists.
+
+
+Localization
