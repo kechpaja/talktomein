@@ -28,7 +28,7 @@ def one_row(lang, has_remove_button=False):
                                        else "<td></td><td></td><td></td>")
 
 
-optionfmt = '<option value=\"%s\">%s</option>'
+optfmt = '<option value=\"%s\">%s</option>'
 addfmt = '''
 <tr class="add-row">
     <td class="level">?</td>
@@ -44,10 +44,8 @@ def table_innards(langs, all_langs=None):
     for level in ["C", "B", "A"]:
         row = "".join([one_row(l, all_langs) for l in langs if l[2] == level])
         blocks.append(row)
-    acc = "".join([b for b in blocks if len(b) > 0])
-    if all_langs:
-        acc += (addfmt % "".join(optionfmt % l for l in all_langs))
-    return acc
+    addrow = addfmt % "".join(optfmt%l for l in all_langs) if all_langs else ""
+    return "".join([b for b in blocks if b]) + addrow
 
 
 framefmt = '<h3>%s</h3><table>%s</table>%s'
@@ -63,15 +61,11 @@ bottomfmt = '''
 <button id="save-button" disabled>Save Changes</button>
 <p>Logged in as %s.</p>
 <div><a href="/account">Account Details</a><a href="/logout">Logout</a></div>
-<script>
-    var languages = {%s};
-</script>
 '''
 
 def update(langs, user, all_langs):
     title = "Edit language list" # TODO localize
     body = framefmt % (title,
                        table_innards(langs, all_langs),
-                       bottomfmt % (user,
-                                    ",".join('"%s":"%s"'%l for l in all_langs)))
+                       bottomfmt % user)
     return base(title, body, ["general", "update"], ["scripts"])

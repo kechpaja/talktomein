@@ -23,6 +23,10 @@ button + p {
     border-bottom: 5px solid white;
 }
 
+.add-row {
+    background-color: #ff9d00;
+}
+
 .add-button {
     background-color: #00ff00;
 }

@@ -17,7 +17,9 @@
     // Enable add buttons
     function enableAddButton(button, level, before) {
         button.onclick = function () {
-            var lang = document.getElementById("add").value;
+            var dropdown = document.getElementById("add");
+            var lang = dropdown.value;
+            var langname = dropdown.options[dropdown.selectedIndex].text;
 
             if (!lang) {
                 return; // skip null element in selector
@@ -28,7 +30,7 @@
             langtr.className = level;
 
             var inner = "<td class='level'>" + level + "</td>";
-            inner += "<td class='language'>" + languages[lang] + "</td>";
+            inner += "<td class='language'>" + langname + "</td>";
             inner += "<td></td><td></td>"
             inner += "<td><button class='remove-button'>X</button></td></tr>";
             langtr.innerHTML = inner;

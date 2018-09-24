@@ -45,6 +45,3 @@ levels. May also want to put change level buttons on each language bar.
 
 Probably want to remove the language from the dropdown once it has been added
 to the list. 
-
-
-Styling for new add language button

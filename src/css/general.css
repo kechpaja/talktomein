@@ -42,7 +42,7 @@ body > button, form > button, form > input {
     background: #9E9E9E;
 }
 
-.C + .B, .B + .A, body > button, form > button {
+.C + .B, .B + .A, .A + .add-row, body > button, form > button {
     border-top: 0.4em solid white;
 }
 
