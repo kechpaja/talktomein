@@ -58,7 +58,6 @@ def display(langs, user):
 
 
 bottomfmt = '''
-<button id="save-button" disabled>Save Changes</button>
 <p>Logged in as %s.</p>
 <div><a href="/account">Account Details</a><a href="/logout">Logout</a></div>
 '''

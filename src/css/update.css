@@ -28,11 +28,11 @@ button + p {
 }
 
 .B.unsaved {
-    background-color: white;
+    background-color: #ffff88;
 }
 
 .A.unsaved {
-    background-color: white;
+    background-color: #cecece;
 }
 
 .add-row {
@@ -46,24 +46,4 @@ button + p {
 .remove-button {
     color: white;
     background-color: #ff0000;
-}
-
-#save-button {
-    background-color: #ff9d00;
-}
-
-#save-button:hover {
-    background-color: #ff9300;
-}
-
-#save-button:active {
-    background-color: #ff8e00;
-}
-
-#save-button:disabled {
-    background-color: #ffb650;
-}
-
-#save-button + #deleteacct {
-    margin-top: 1.2em
 }

@@ -137,33 +137,4 @@
     for (var i = 0; i < addButtons.length; i++) {
         enableAddButton(addButtons[i], levels[i], buttonBefores[i]);
     }
-
-
-    // Enable save button
-    document.getElementById("save-button").onclick = function () {
-        var langs = {};
-        var elements = document.getElementsByClassName("language");
-        for (var i = 0; i < elements.length; i++) {
-            var row = elements[i].parentElement;
-            langs[row.id] = row.className; // TODO does this work?
-        }
-
-        fetch("/update", {
-            method: "POST",
-            credentials: "same-origin",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(langs)
-        }).then(function (response) {
-            return response.json();
-        }).then(function (jsonResponse) {
-            if (jsonResponse["ok"]) {
-                document.getElementById("save-button").disabled = true;
-            } else {
-                // TODO handle error response
-            }
-        });
-    };
 })();
