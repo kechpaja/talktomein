@@ -32,21 +32,34 @@
                 return; // skip null element in selector
             }
 
-            var langtr = document.createElement("tr");
-            langtr.id = lang;
-            langtr.className = level;
+            var row = document.createElement("tr");
+            row.id = lang;
+            row.className = level;
 
             var inner = "<td class='level'>" + level + "</td>";
             inner += "<td class='language'>" + langname + "</td>";
             inner += "<td></td><td></td>"
             inner += "<td><button class='remove-button'>X</button></td></tr>";
-            langtr.innerHTML = inner;
+            row.innerHTML = inner;
 
-            var row = document.getElementsByClassName(before)[0];
-            row.parentElement.insertBefore(langtr, row);
-            var button = langtr.getElementsByClassName("remove-button")[0];
-            enableRemoveButton(button);
 
+            var rows = [].slice.call(document.getElementsByClassName(level));
+            rows.push(row);
+            rows.sort(function (e1, e2) {
+                var s1 = e1.getElementsByClassName("language")[0].textContent;
+                var s2 = e2.getElementsByClassName("language")[0].textContent;
+                return s1.localeCompare(s2);
+            });
+
+            var index = rows.indexOf(row);
+            if (index + 1 >= rows.length) {
+                var nextRow = document.getElementsByClassName(before)[0];
+            } else {
+                var nextRow = document.getElementsByClassName(level)[index];
+            }
+
+            nextRow.parentElement.insertBefore(row, nextRow);
+            enableRemoveButton(row.getElementsByClassName("remove-button")[0]);
             dropdown.removeChild(dropdown.options[dropdown.selectedIndex]);
 
             document.getElementById("save-button").disabled = false;

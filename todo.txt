@@ -6,8 +6,6 @@ Add borders to add and remove buttons
 
 Add hover and active colors to add and remove buttons
 
-Perhaps delete language when it's added elsewhere?
-
 
 Add talktomein.com domain to Zoho mail account, if possible
 
@@ -42,6 +40,3 @@ Perhaps use JS filter to allow for an autocompleting list of languages?
 Yes. I'll need a function for sorting each list of languages, and one for
 inserting the new one, as well as moving it around as the user tabs through
 levels. May also want to put change level buttons on each language bar. 
-
-Probably want to remove the language from the dropdown once it has been added
-to the list. 

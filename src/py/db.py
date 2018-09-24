@@ -21,7 +21,7 @@ def user_langs(user):
 def all_langs():
     cnxn = MySQLdb.connect(read_default_file=config_file)
     cursor = cnxn.cursor()
-    cursor.execute("select * from languages")
+    cursor.execute("select * from languages order by name")
     result = cursor.fetchall()
     cnxn.close()
     return result
