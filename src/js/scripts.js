@@ -4,6 +4,13 @@
         var row = button.parentElement.parentElement;
         button.onclick = function () { 
             row.parentElement.removeChild(row);
+
+            var optrow = document.createElement("option");
+            optrow.value = row.id;
+            var content = row.getElementsByClassName("language")[0].textContent;
+            optrow.innerHTML = content;
+            document.getElementById("add").appendChild(optrow);
+
             document.getElementById("save-button").disabled = false;
         };
     }
@@ -39,6 +46,9 @@
             row.parentElement.insertBefore(langtr, row);
             var button = langtr.getElementsByClassName("remove-button")[0];
             enableRemoveButton(button);
+
+            dropdown.removeChild(dropdown.options[dropdown.selectedIndex]);
+
             document.getElementById("save-button").disabled = false;
         };
 
