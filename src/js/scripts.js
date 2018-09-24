@@ -1,4 +1,32 @@
 (function () {
+    function updateDatabase(language, level, then, orElse) {
+        var langs = {"language" : language};
+        if (level) {
+            langs["level"] = level; //row.classList[0];
+        }
+
+        fetch("/update", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(langs)
+        }).then(function (response) {
+            return response.json();
+        }).then(function (jsonResponse) {
+            if (jsonResponse["ok"]) {
+                then();
+                //row.className = row.classList[0];
+            } else {
+                orElse();
+                // TODO handle error response
+            }
+        });
+    }
+
+
     function insertIndex(collection, item, getSortByText) {
         var array = [].slice.call(collection);
         array.push(item);
@@ -9,30 +37,42 @@
     }
 
 
+
+    function removeRow(row) {
+        row.parentElement.removeChild(row);
+
+        var optrow = document.createElement("option");
+        optrow.value = row.id;
+        var content = row.getElementsByClassName("language")[0].textContent;
+        optrow.innerHTML = content;
+
+        var dropdown = document.getElementById("add");
+        var index = insertIndex(dropdown.options, optrow, function (x) {
+            return x.textContent;
+        });
+
+        if (index + 1 >= dropdown.options.length) {
+            dropdown.appendChild(optrow);
+        } else {
+            dropdown.insertBefore(optrow, dropdown.options[index]);
+        }
+    }
+
     // Enable remove buttons
     function enableRemoveButton(button) {
         var row = button.parentElement.parentElement;
-        button.onclick = function () { 
-            row.parentElement.removeChild(row);
-
-            var optrow = document.createElement("option");
-            optrow.value = row.id;
-            var content = row.getElementsByClassName("language")[0].textContent;
-            optrow.innerHTML = content;
-
-            var dropdown = document.getElementById("add");
-            var index = insertIndex(dropdown.options, optrow, function (x) {
-                return x.textContent;
+        var remove = function () {
+            button.removeEventListener("click", remove);
+            row.classList.add("unsaved");
+            updateDatabase(row.id, null, function () { 
+                removeRow(row); 
+            }, function () {
+                button.addEventListener("click", remove);
+                row.className = row.classList[0];
             });
-
-            if (index + 1 >= dropdown.options.length) {
-                dropdown.appendChild(optrow);
-            } else {
-                dropdown.insertBefore(optrow, dropdown.options[index]);
-            }
-
-            document.getElementById("save-button").disabled = false;
         };
+
+        button.addEventListener("click", remove);
     }
 
     var removeButtons = document.getElementsByClassName("remove-button");
@@ -54,7 +94,7 @@
 
             var row = document.createElement("tr");
             row.id = lang;
-            row.className = level;
+            row.className = level + " unsaved";
 
             var inner = "<td class='level'>" + level + "</td>";
             inner += "<td class='language'>" + langname + "</td>";
@@ -75,10 +115,18 @@
             }
 
             nextRow.parentElement.insertBefore(row, nextRow);
+
+            // TODO add remove button only after element add is confirmed
             enableRemoveButton(row.getElementsByClassName("remove-button")[0]);
             dropdown.removeChild(dropdown.options[dropdown.selectedIndex]);
 
-            document.getElementById("save-button").disabled = false;
+            updateDatabase(lang, level, function () {
+                row.className = level;
+            }, function () {
+                // TODO after unsuccessful add
+                // TODO remove element again, and re-add to option list
+                removeRow(row);
+            });
         };
 
     }

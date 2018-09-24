@@ -26,15 +26,14 @@ def all_langs():
     cnxn.close()
     return result
 
-def update_langs(user, languages):
+def update_lang(user, language, level):
     cnxn = MySQLdb.connect(read_default_file=config_file)
     cursor = cnxn.cursor()
-    cursor.execute("delete from whospeakswhat where user = %s", (user,))
-    if len(languages) > 0:
-        langs = [[user, l, languages[l]] for l in languages.keys()]
-        sql = "insert into whospeakswhat values "
-        sql += ",".join(["(%s,%s,%s)"]*len(langs))
-        cursor.execute(sql, tuple(sum(langs, [])))
+    delete_sql = "delete from whospeakswhat where user = %s and language = %s"
+    cursor.execute(delete_sql, (user, language))
+    if level:
+        cursor.execute("insert into whospeakswhat values (%s, %s, %s)",
+                       (user, language, level))
     cnxn.commit()
     cnxn.close()
 

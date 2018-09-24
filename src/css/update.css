@@ -23,6 +23,18 @@ button + p {
     border-bottom: 5px solid white;
 }
 
+.C.unsaved {
+    background-color: #aaffff;
+}
+
+.B.unsaved {
+    background-color: white;
+}
+
+.A.unsaved {
+    background-color: white;
+}
+
 .add-row {
     background-color: #ff9d00;
 }
