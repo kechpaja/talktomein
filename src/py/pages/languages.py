@@ -7,25 +7,19 @@ from .base import base
 # TODO localization
 
 rowfmt = '''
-<tr{0} class="{2}">
+<tr id="{0}" class="{2}">
     <td class="level">{2}</td>
-    {1}
-    {3}
+    <td class="language">{1}</td>
+    <td></td>
+    <td></td>
+    <td>{3}</td>
 </tr>
 '''
 
-remove_button = '''
-<td></td>
-<td></td>
-<td><button class="remove-button">X</button></td>
-'''
+removebtn = '<button class="remove-button">X</button>'
 
-def one_row(lang, has_remove_button=False):
-    return rowfmt.format(' id="%s"' % lang[0], # Code
-                         '<td class="language">%s</td>' % lang[1], # Name
-                         lang[2], # Level
-                         remove_button if has_remove_button 
-                                       else "<td></td><td></td><td></td>")
+def one_row(lang, edit=False):
+    return rowfmt.format(lang[0], lang[1], lang[2], removebtn if edit else "")
 
 
 optfmt = '<option value=\"%s\">%s</option>'
@@ -44,8 +38,12 @@ def table_innards(langs, all_langs=None):
     for level in ["C", "B", "A"]:
         row = "".join([one_row(l, all_langs) for l in langs if l[2] == level])
         blocks.append(row)
-    addrow = addfmt % "".join(optfmt%l for l in all_langs) if all_langs else ""
-    return "".join([b for b in blocks if b]) + addrow
+    innards = "".join([b for b in blocks if b])
+    if all_langs:
+        user_lang_codes = next(zip(*langs))
+        optlangs = [l for l in all_langs if l[0] not in user_lang_codes]
+        innards += addfmt % "".join(optfmt % l for l in optlangs)
+    return innards
 
 
 framefmt = '<h3>%s</h3><table>%s</table>%s'
