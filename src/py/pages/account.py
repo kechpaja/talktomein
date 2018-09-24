@@ -43,13 +43,14 @@ addfmt = '''
 failmsgfmt = '<p class="failmsg">%s</p>'
 
 permission_text = '''I grant permission for my email address and whatever 
-language information I add to my account to be stored on and processed by 
-server(s) controlled by the administrator(s) of TalkToMeIn.com. I understand
-that my language information will be public, and will occasionally be used in
-anonymized form to generate statistical analyses for publication, but that my 
-email address will be used only for authentication and site-related technical
-announcements. I can permanently delete my account, and by extension all of my
-stored data, at any time.'''
+language information I add to my account to be stored and processed in the 
+United States and/or Finland, by the administrator(s) of TalkToMeIn.com. I 
+understand that my language information will be public, and will occasionally 
+be used in anonymized form to generate statistical analyses for publication, 
+but that my email address will be used only for authentication and site-related 
+technical announcements. I can permanently delete my account at any time, at 
+which point my data will be deleted from TalkToMeIn's database immediately and
+from all backups within 30 days.'''
 
 newsletter_text = '''I would like to receive the TalkToMeIn newsletter (usually
 no more than one message per month).'''
