@@ -37,6 +37,5 @@ Auto-save?
 
 Perhaps use JS filter to allow for an autocompleting list of languages?
 
-Yes. I'll need a function for sorting each list of languages, and one for
-inserting the new one, as well as moving it around as the user tabs through
-levels. May also want to put change level buttons on each language bar. 
+Also consider allowing user to tab through levels when adding a language, and
+show it moving through the level lists.
