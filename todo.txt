@@ -29,9 +29,6 @@ Create endpoint for starting the login flow.
 Create dedicated methods for the different login/auth links
 
 
-Allow user to update their email preferences.
-
-
 Perhaps use JS filter to allow for an autocompleting list of languages?
 
 Also consider allowing user to tab through levels when adding a language, and

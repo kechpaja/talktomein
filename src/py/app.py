@@ -91,7 +91,7 @@ class CreateAccountResource(object):
                               "email" : email,
                               "permission" : int("permission" in data),
                               "newsletter" : int("newsletter" in data),
-                              "marketing" : int("marketing_emails" in data)
+                              "marketing" : int("marketing" in data)
                           }))
                 resp.body = pages.message.activation_link_sent(username)
             resp.content_type = "text/html; charset=utf-8"
@@ -181,8 +181,25 @@ class FinishLoginResource(object):
 
 class AccountResource(object):
     def on_get(self, req, resp):
-        resp.body = pages.account()
+        # TODO catch key error if not logged in
+        resp.body = pages.account(*db.get_user_prefs(req.context["user"]))
         resp.content_type = "text/html; charset=utf-8"
+
+
+class UpdateAccountResource(object):
+    def on_post(self, req, resp):
+        # TODO catch not logged in errors here too
+        data = json.loads(req.stream.read().decode("utf-8"))
+        try:
+            if data["name"] in ["newsletter", "marketing"]:
+                db.update_user(req.context["user"],
+                               data["name"],
+                               int("value" in data and data["value"]))
+            resp.body = "{}"
+        except KeyError:
+            resp.status = falcon.HTTP_403
+            resp.body = "{}" # TODO error message?
+        resp.content_type = "application/json; charset=utf-8"
 
 
 # Get the signing secret and create signers
@@ -202,6 +219,7 @@ app.add_route("/account/delete", DeleteAccountResource())
 app.add_route("/account/delete/confirm", ConfirmDeleteAccountResource())
 app.add_route("/account/delete/finish", FinishDeleteAccountResource())
 app.add_route("/account/login/finish/{token}", FinishLoginResource())
+app.add_route("/account/update", UpdateAccountResource())
 app.add_route("/logout", LogoutResource())
 app.add_route("/update", UpdateResource())
 app.add_route("/{user}", ListResource())

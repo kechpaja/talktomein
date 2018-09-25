@@ -47,6 +47,15 @@ def get_user_email(user):
         return data[0]
     return None
 
+def get_user_prefs(user):
+    cnxn = MySQLdb.connect(read_default_file=config_file)
+    cursor = cnxn.cursor()
+    cursor.execute("select newsletter, marketing from users where id = %s",
+                   (user,))
+    result = cursor.fetchone()
+    cnxn.close()
+    return result
+
 def add_user(username, email, permission, newsletter, marketing):
     cnxn = MySQLdb.connect(read_default_file=config_file)
     cursor = cnxn.cursor()
@@ -61,4 +70,13 @@ def delete_user(user):
     cursor.execute("delete from whospeakswhat where user = %s", (user,))
     cursor.execute("delete from users where id = %s", (user,))
     cnxn.commit()
+    cnxn.close()
+
+def update_user(user, column, value):
+    cnxn = MySQLdb.connect(read_default_file=config_file)
+    cursor = cnxn.cursor()
+    if column in ["newsletter", "marketing"]:
+        cursor.execute("update users set " + column + " = %s where id = %s",
+                       (value, user))
+        cnxn.commit()
     cnxn.close()
