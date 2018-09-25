@@ -33,6 +33,8 @@ indexfmt = '''
 </form>
 <hr>
 <a id="deleteacct" href="/account/delete/confirm">Delete Account</a>
+<hr>
+<a href="/">Back to edit page</a>
 '''
 
 def index(newsletter, marketing_emails):
@@ -41,7 +43,7 @@ def index(newsletter, marketing_emails):
                             newsletter_text,
                             "checked" if marketing_emails else "",
                             marketing_emails_text), 
-                ["general"],
+                ["general", "account"],
                 ["account"])
 
 

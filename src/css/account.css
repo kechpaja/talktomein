@@ -1,0 +1,7 @@
+p {
+    font-size: 20px;
+}
+
+input[type="checkbox"] {
+    margin-right: 0.5em;
+}
