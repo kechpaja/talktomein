@@ -43,6 +43,14 @@ button + p {
     background-color: #00ff00;
 }
 
+.add-button:hover {
+    background-color: #77ff44;
+}
+
+.add-button:active {
+    background-color: #aaff66;
+}
+
 .remove-button {
     color: white;
     background-color: #ff0000;

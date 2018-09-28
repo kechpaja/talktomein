@@ -4,8 +4,6 @@ Allow user to set order of languages (how to do that in DB? Can it be auto?).
 
 Add borders to add buttons
 
-Add hover and active colors to add buttons
-
 
 Add talktomein.com domain to Zoho mail account, if possible
 
