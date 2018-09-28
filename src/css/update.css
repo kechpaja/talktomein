@@ -47,3 +47,11 @@ button + p {
     color: white;
     background-color: #ff0000;
 }
+
+.remove-button:hover {
+    background-color: #ff4411;
+}
+
+.remove-button:active {
+    background-color: #ff6622;
+}
