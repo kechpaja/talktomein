@@ -27,4 +27,9 @@ Localization
 
 
 Revisit ams, ryn, kzg in database --- the names I saved them under should
-probably be updated to reflect their native names. 
+probably be updated to reflect their native names.
+
+
+Go through entire list of languages from time to time, and pick a few that
+could stand to be updated. Do some actual research, and determine what their
+native names are. 
