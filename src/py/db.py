@@ -18,6 +18,8 @@ def user_langs(user):
     cnxn.close()
     return result
 
+## TODO above this line not done
+
 def all_langs():
     cnxn = MySQLdb.connect(read_default_file=config_file)
     cursor = cnxn.cursor()
@@ -26,14 +28,14 @@ def all_langs():
     cnxn.close()
     return result
 
-def update_lang(user, language, level):
+def update_lang(user, language, speaking=0, listening=0, reading=0, writing=0):
     cnxn = MySQLdb.connect(read_default_file=config_file)
     cursor = cnxn.cursor()
     delete_sql = "delete from whospeakswhat where user = %s and language = %s"
     cursor.execute(delete_sql, (user, language))
-    if level:
-        cursor.execute("insert into whospeakswhat values (%s, %s, %s)",
-                       (user, language, level))
+    if speaking or listening or reading or writing:
+        cursor.execute("insert into whospeakswhat values (%s,%s,%s,%s,%s,%s)",
+                       (user, language, speaking, listening, reading, writing))
     cnxn.commit()
     cnxn.close()
 
@@ -47,6 +49,9 @@ def get_user_email(user):
         return data[0]
     return None
 
+# TODO for GDPR compliance, add date, version of site, and loc lang to each 
+# TODO insert and update to users table. Perhaps merge marketing and newsletter
+# TODO items into a single option?
 def get_user_prefs(user):
     cnxn = MySQLdb.connect(read_default_file=config_file)
     cursor = cnxn.cursor()

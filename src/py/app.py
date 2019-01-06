@@ -104,13 +104,17 @@ class UpdateResource(object):
         try:
             data = json.loads(req.stream.read().decode("utf-8"))
             # TODO block malicious poster from adding junk language names
-            if "level" in data and data["level"] not in ["A", "B", "C"]:
-                resp.body = '{"ok" : false}'
-            else:
-                db.update_lang(req.context["user"], 
-                               data["language"], 
-                               data["level"] if "level" in data else None)
-                resp.body = '{"ok" : true}'
+            # TODO block user from adding junk level values
+            #if "level" in data and data["level"] not in ["A", "B", "C"]:
+            #    resp.body = '{"ok" : false}'
+            #else:
+            db.update_lang(req.context["user"], 
+                           data["language"], 
+                           data["speaking"],
+                           data["listening"],
+                           data["reading"],
+                           data["writing"])
+            resp.body = '{"ok" : true}'
         except KeyError:
             raise falcon.HTTPForbidden()
 
