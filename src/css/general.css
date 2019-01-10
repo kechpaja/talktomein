@@ -64,7 +64,7 @@ table + a {
     font-weight: bold;
     font-size: 29px;
     color: black;
-    padding: 0.1em 1em 0.1em 0.25em;
+    padding: 0.1em 0.25em 0.1em 0.25em;
 }
 
 .level {
