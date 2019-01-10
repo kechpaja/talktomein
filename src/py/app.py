@@ -89,9 +89,10 @@ class CreateAccountResource(object):
                           create_signer.dumps({
                               "username" : username,
                               "email" : email,
-                              "permission" : int("permission" in data),
-                              "newsletter" : int("newsletter" in data),
-                              "marketing" : int("marketing" in data)
+                              "marketing" : int("marketing" in data),
+                              "timestamp" : str(time.time()),
+                              "version" : "0.0",
+                              "loclang" : "eng"
                           }))
                 resp.body = pages.message.activation_link_sent(username)
             resp.content_type = "text/html; charset=utf-8"
@@ -103,11 +104,6 @@ class UpdateResource(object):
     def on_post(self, req, resp):
         try:
             data = json.loads(req.stream.read().decode("utf-8"))
-            # TODO block malicious poster from adding junk language names
-            # TODO block user from adding junk level values
-            #if "level" in data and data["level"] not in ["A", "B", "C"]:
-            #    resp.body = '{"ok" : false}'
-            #else:
             db.update_lang(req.context["user"], 
                            data["language"], 
                            data["speaking"],
@@ -195,7 +191,7 @@ class UpdateAccountResource(object):
         # TODO catch not logged in errors here too
         data = json.loads(req.stream.read().decode("utf-8"))
         try:
-            if data["name"] in ["newsletter", "marketing"]:
+            if data["name"] in ["marketing"]:
                 db.update_user(req.context["user"],
                                data["name"],
                                int("value" in data and data["value"]))

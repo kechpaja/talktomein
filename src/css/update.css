@@ -18,36 +18,26 @@ button + p {
     padding-top: 0.5em;
 }
 
-.C, .B, .A {
+tr {
     border-top: 5px solid white;
     border-bottom: 5px solid white;
 }
 
-.C.unsaved {
-    background-color: #aaffff;
-}
+/* TODO figure out how unsaved class works */
 
-.B.unsaved {
-    background-color: #ffff88;
-}
-
-.A.unsaved {
-    background-color: #cecece;
-}
-
-.add-row {
+#add-row {
     background-color: #ff9d00;
 }
 
-.add-button {
+#add-button {
     background-color: #00ff00;
 }
 
-.add-button:hover {
+#add-button:hover {
     background-color: #77ff44;
 }
 
-.add-button:active {
+#add-button:active {
     background-color: #aaff66;
 }
 

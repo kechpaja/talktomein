@@ -61,11 +61,11 @@ def get_user_prefs(user):
     cnxn.close()
     return result
 
-def add_user(username, email, permission, newsletter, marketing):
+def add_user(username, email, marketing, timestamp, version, loclang):
     cnxn = MySQLdb.connect(read_default_file=config_file)
     cursor = cnxn.cursor()
-    cursor.execute("insert ignore into users values (%s, %s, %s, %s, %s)", 
-                   (username, email, permission, newsletter, marketing))
+    cursor.execute("insert ignore into users values (%s, %s, %s, %s, %s, %s)", 
+                   (username, email, marketing, timestamp, version, loclang))
     cnxn.commit()
     cnxn.close()
 
@@ -77,11 +77,14 @@ def delete_user(user):
     cnxn.commit()
     cnxn.close()
 
+# TODO consider getting rid of this and just adding another row
 def update_user(user, column, value):
     cnxn = MySQLdb.connect(read_default_file=config_file)
     cursor = cnxn.cursor()
-    if column in ["newsletter", "marketing"]:
+    if column in ["marketing"]:
         cursor.execute("update users set " + column + " = %s where id = %s",
                        (value, user))
+        cursor.execute("update users set timestamp = %s where id = %s",
+                       (time.time(), user))
         cnxn.commit()
     cnxn.close()

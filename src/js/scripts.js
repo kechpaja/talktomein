@@ -1,9 +1,12 @@
 (function () {
-    function updateDatabase(language, level, then, orElse) {
-        var langs = {"language" : language};
-        if (level) {
-            langs["level"] = level; //row.classList[0];
-        }
+    function updateDatabase(lang, speak, listen, read, write, then, orElse) {
+        var langs = {
+                        "language" : lang,
+                        "speaking" : speak,
+                        "listening" : listen,
+                        "reading" : read,
+                        "writing" : write
+                    };
 
         fetch("/update", {
             method: "POST",
@@ -26,7 +29,6 @@
         });
     }
 
-
     function insertIndex(collection, item, getSortByText) {
         var array = [].slice.call(collection);
         array.push(item);
@@ -35,8 +37,6 @@
         });
         return array.indexOf(item);
     }
-
-
 
     function removeRow(row) {
         row.parentElement.removeChild(row);
@@ -80,11 +80,10 @@
         enableRemoveButton(removeButtons[i]);
     }
 
-
     // Enable add buttons
-    function enableAddButton(button, level, before) {
-        button.onclick = function () {
-            var dropdown = document.getElementById("add");
+    function enableAddButton(button, before) {
+        button.addEventListener("click", function () {
+            var dropdown = document.getElementById("lang-selector");
             var lang = dropdown.value;
             var langname = dropdown.options[dropdown.selectedIndex].text;
 
@@ -92,49 +91,37 @@
                 return; // skip null element in selector
             }
 
-            var row = document.createElement("tr");
-            row.id = lang;
-            row.className = level + " unsaved";
+            var levels = ["-", "|", "||", "|||", "||||", "|||||"];
 
-            var inner = "<td class='level'>" + level + "</td>";
-            inner += "<td class='language'>" + langname + "</td>";
-            inner += "<td></td><td></td>"
+            var speaking = document.getElementById("speaking-selector").value;
+            var listening = document.getElementById("listening-selector").value;
+            var reading = document.getElementById("reading-selector").value;
+            var writing = document.getElementById("writing-selector").value;
+
+            var row = document.createElement("tr");
+            row.className = "unsaved";
+
+            var inner = "<td class='language'>" + langname + "</td>";
+            inner += "<td>" + levels[speaking] + "</td>";
+            inner += "<td>" + levels[listening] + "</td>";
+            inner += "<td>" + levels[reading] + "</td>";
+            inner += "<td>" + levels[writing] + "</td>";
             inner += "<td><button class='remove-button'>X</button></td></tr>";
             row.innerHTML = inner;
 
-            var rows = document.getElementsByClassName(level);
-            var index = insertIndex(rows, row, function (x) {
-                return x.getElementsByClassName("language")[0].textContent;
-            });
+            // TODO sort list of languages?
+            var addRow = document.getElementById("add-row");
+            addRow.parentElement.insertBefore(row, addRow);
 
-            var nextRow;
-            if (index + 1 >= rows.length) {
-                nextRow = document.getElementsByClassName(before)[0];
-            } else {
-                nextRow = document.getElementsByClassName(level)[index];
-            }
-
-            nextRow.parentElement.insertBefore(row, nextRow);
-
-            // TODO add remove button only after element add is confirmed
             enableRemoveButton(row.getElementsByClassName("remove-button")[0]);
             dropdown.removeChild(dropdown.options[dropdown.selectedIndex]);
 
-            updateDatabase(lang, level, function () {
-                row.className = level;
-            }, function () {
-                // TODO after unsuccessful add
-                // TODO remove element again, and re-add to option list
-                removeRow(row);
-            });
-        };
-
+            updateDatabase(lang, speaking, listening, reading, writing, 
+                           function () { row.className = ""; }, 
+                           function () { removeRow(row); });
+        });
     }
 
-    var addButtons = document.getElementsByClassName("add-button");
-    var levels = ["A", "B", "C"];
-    var buttonBefores = ["add-row", "A", "B"];
-    for (var i = 0; i < addButtons.length; i++) {
-        enableAddButton(addButtons[i], levels[i], buttonBefores[i]);
-    }
+    var addButton = document.getElementById("add-button");
+    enableAddButton(addButton);
 })();

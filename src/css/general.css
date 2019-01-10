@@ -35,24 +35,33 @@ table + a {
     margin-top: 1em;
 }
 
-.C {
-    background: #00ffff;
+.l5 {
+    color: #00f0ff;
 }
 
-.B {
-    background: #ffff00;
+.l4 {
+    color: #00ff00;
 }
 
-.A {
-    background: #9E9E9E;
+.l3 {
+    color: #f6f600;
 }
 
-.C + .B, .B + .A, .A + .add-row, body > button, form > button {
-    border-top: 0.4em solid white;
+.l2 {
+    color: orange;
+}
+
+.l1 {
+    color: red;
+}
+
+.l0 {
+    color: lightgrey;
 }
 
 .language {
-    padding: 0.1em 1em 0.1em 0.1em;
+    padding: 0.1em 10.25em 0.1em 0.25em;
+    color: black;
     width: 100%;
 }
 
@@ -61,7 +70,7 @@ table + a {
     font-weight: bold;
     font-size: 34px;
     color: purple;
-    padding: 0.1em 0.8em 0.1em 0.25em;
+    padding: 0.1em 0.25em 0.1em 0.25em;
 }
 
 .border {

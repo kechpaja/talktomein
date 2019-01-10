@@ -21,7 +21,7 @@ removebtn = '<button class="remove-button">X</button>'
 
 def expand_level(level):
     # TODO allow update
-    return "&#x258b;" * level
+    return "|" * level
 
 def one_row(lang, edit=False):
     return rowfmt.format(lang[0], 
@@ -37,26 +37,26 @@ optfmt = '<option value=\"%s\">%s</option>'
 levelselectfmt = '''
 <select id="%s">
     <option value="0">-</option>
-    <option value="5">&#x258b;&#x258b;&#x258b;&#x258b;&#x258b;</option>
-    <option value="4">&#x258b;&#x258b;&#x258b;&#x258b;</option>
-    <option value="3">&#x258b;&#x258b;&#x258b;</option>
-    <option value="2">&#x258b;&#x258b;</option>
-    <option value="1">&#x258b;</option>
+    <option value="5">|||||</option>
+    <option value="4">||||</option>
+    <option value="3">|||</option>
+    <option value="2">||</option>
+    <option value="1">|</option>
 </select>
 '''
 addfmt = '''
-<tr class="add-row">
+<tr id="add-row">
     <td><select id="lang-selector"><option value="">-</option>%s</select></td>
     <td>{0}</td>
     <td>{1}</td>
     <td>{2}</td>
     <td>{3}</td>
-    <td><button class="add-button">+</button></td>
+    <td><button id="add-button">+</button></td>
 </tr>
-'''.format(levelselectfmt % "speaking",
-           levelselectfmt % "listening",
-           levelselectfmt % "reading",
-           levelselectfmt % "writing")
+'''.format(levelselectfmt % "speaking-selector",
+           levelselectfmt % "listening-selector",
+           levelselectfmt % "reading-selector",
+           levelselectfmt % "writing-selector")
 
 def table_innards(langs, all_langs=None):
     innards = "".join([one_row(l, all_langs) for l in langs])
