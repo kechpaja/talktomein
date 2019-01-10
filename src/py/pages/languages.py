@@ -63,7 +63,7 @@ addfmt = '''
 def table_innards(langs, all_langs=None):
     innards = "".join([one_row(l, all_langs) for l in langs])
     if all_langs:
-        user_lang_codes = next(zip(*langs))
+        user_lang_codes = next(zip(*langs)) if langs else []
         optlangs = [l for l in all_langs if l[0] not in user_lang_codes]
         innards += addfmt % "".join(optfmt % l for l in optlangs)
     return innards
