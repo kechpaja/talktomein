@@ -101,13 +101,13 @@
             var row = document.createElement("tr");
             row.className = "unsaved";
 
-            var inner = "<td class='language'>" + langname + "</td>";
-            inner += "<td>" + levels[speaking] + "</td>";
-            inner += "<td>" + levels[listening] + "</td>";
-            inner += "<td>" + levels[reading] + "</td>";
-            inner += "<td>" + levels[writing] + "</td>";
-            inner += "<td><button class='remove-button'>X</button></td></tr>";
-            row.innerHTML = inner;
+            var ac = "<td class='language'>" + langname + "</td>";
+            ac += "<td class='level l"+speaking+"'>"+levels[speaking] + "</td>";
+            ac += "<td class='level l"+listening+"'>"+levels[listening]+"</td>";
+            ac += "<td class='level l"+reading+"'>" + levels[reading] + "</td>";
+            ac += "<td class='level l"+writing+"'>" + levels[writing] + "</td>";
+            ac += "<td><button class='remove-button'>X</button></td></tr>";
+            row.innerHTML = ac;
 
             // TODO sort list of languages?
             var addRow = document.getElementById("add-row");
