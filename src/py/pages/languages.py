@@ -96,8 +96,7 @@ bottomfmt = '''
 '''
 
 def update(langs, user, all_langs):
-    title = "Edit language list" # TODO localize
-    body = framefmt % (title,
-                       table_innards(langs, all_langs),
+    body = framefmt % (table_innards(langs, all_langs),
                        bottomfmt % user)
-    return base(title, body, ["general", "update"], ["scripts"])
+    # TODO localize?
+    return base("Edit language list", body, ["general", "update"], ["scripts"])
