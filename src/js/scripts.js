@@ -64,7 +64,7 @@
         var remove = function () {
             button.removeEventListener("click", remove);
             row.classList.add("unsaved");
-            updateDatabase(row.id, null, function () { 
+            updateDatabase(row.id, null, null, null, null, function () {
                 removeRow(row); 
             }, function () {
                 button.addEventListener("click", remove);

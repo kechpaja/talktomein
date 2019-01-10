@@ -31,8 +31,8 @@ def one_row(lang, edit=False):
                          lang[2], expand_level(lang[2]),
                          lang[3], expand_level(lang[3]),
                          lang[4], expand_level(lang[4]),
-                         lang[5], expand_level(lang[5]), "")
-                         #removebtn if edit else "")
+                         lang[5], expand_level(lang[5]),
+                         removebtn if edit else "")
 
 
 optfmt = '<option value=\"%s\">%s</option>'
