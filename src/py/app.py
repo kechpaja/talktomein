@@ -203,7 +203,7 @@ class UpdateAccountResource(object):
 
 
 # Get the signing secret and create signers
-with open("/home/protected/signing_secret", "rb") as f:
+with open("/home/gunicorn/signing_secret", "rb") as f:
     secret = f.read()
 
 login_signer = URLSafeTimedSerializer(secret, salt="login")

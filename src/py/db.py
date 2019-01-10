@@ -4,7 +4,7 @@
 
 import MySQLdb
 
-config_file = "/home/protected/db.conf"
+config_file = "/home/gunicorn/.my.cnf"
 
 def user_langs(user):
     sql = '''select languages.id, languages.name, whospeakswhat.level
