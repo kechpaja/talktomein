@@ -33,7 +33,7 @@ indexfmt = '''
 <a href="/">Back to edit page</a>
 '''
 
-def index(newsletter, marketing_emails):
+def index(marketing_emails):
     return base("Account Details", 
                 indexfmt % ("checked" if marketing_emails else "",
                             marketing_emails_text), 

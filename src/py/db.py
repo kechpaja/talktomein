@@ -3,6 +3,7 @@
 #####
 
 import MySQLdb
+import time
 
 config_file = "/home/gunicorn/.my.cnf"
 
@@ -57,7 +58,7 @@ def get_user_email(user):
 def get_user_prefs(user):
     cnxn = MySQLdb.connect(read_default_file=config_file)
     cursor = cnxn.cursor()
-    cursor.execute("select newsletter, marketing from users where id = %s",
+    cursor.execute("select marketing from users where id = %s",
                    (user,))
     result = cursor.fetchone()
     cnxn.close()
@@ -87,6 +88,6 @@ def update_user(user, column, value):
         cursor.execute("update users set " + column + " = %s where id = %s",
                        (value, user))
         cursor.execute("update users set timestamp = %s where id = %s",
-                       (time.time(), user))
+                       (str(time.time()), user))
         cnxn.commit()
     cnxn.close()
