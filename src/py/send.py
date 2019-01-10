@@ -19,5 +19,5 @@ you are concerned, feel free to contact us by replying to this message. \
 def link(to, subject, msg, path, token=None):
     path += "?token=" + token if token else ""
     path = "/" + path if not path.startswith("/") else path
-    with os.popen("/usr/bin/sendmail -t", "w") as f:
+    with os.popen("sendmail -t", "w") as f:
         f.write(msgfmt % (subject, to, msg, path))
