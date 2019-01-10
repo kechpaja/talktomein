@@ -13,7 +13,10 @@ def user_langs(user):
                     whospeakswhat.writing
              from languages join whospeakswhat 
                  on whospeakswhat.language = languages.id
-             where (whospeakswhat.user = %s) order by languages.name'''
+             where (whospeakswhat.user = %s)
+             order by whospeakswhat.speaking desc, whospeakswhat.listening desc,
+                      whospeakswhat.reading desc, whospeakswhat.writing desc,
+                      languages.name'''
     cnxn = MySQLdb.connect(read_default_file=config_file)
     cursor = cnxn.cursor()
     cursor.execute(sql, (user,))
