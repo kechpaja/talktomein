@@ -71,7 +71,8 @@ class CreateAccountResource(object):
         reqbody = req.stream.read().decode("utf-8")
         data = dict(tuple(f.split("=")) for f in reqbody.split("&"))
         required_fields = ["username", "email", "permission"]
-        if all(k in data.keys() for k in required_fields):
+        #if all(k in data.keys() for k in required_fields):
+        if False: # XXX block new accounts until we're ready to be public
             username = data["username"]
             email = unquote(data["email"])
             banned = ["login", "logout", "contact", "about", "api", "account", 
