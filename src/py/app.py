@@ -5,6 +5,7 @@
 import falcon
 import json
 import re
+import time
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 from urllib.parse import unquote
 
@@ -97,7 +98,7 @@ class CreateAccountResource(object):
                 resp.body = pages.message.activation_link_sent(username)
             resp.content_type = "text/html; charset=utf-8"
         else:
-            raise falcon.HTTPBadRequest() # TODO error message?
+            raise falcon.HTTPBadRequest(data) # TODO error message?
 
 
 class UpdateResource(object):

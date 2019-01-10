@@ -9,28 +9,30 @@ from .base import base
 rowfmt = '''
 <tr id="{0}">
     <td class="language">{1}</td>
-    <td>{2}</td>
-    <td>{3}</td>
-    <td>{4}</td>
-    <td>{5}</td>
-    <td>{6}</td>
+    <td class="level l{2}">{3}</td>
+    <td class="level l{4}">{5}</td>
+    <td class="level l{6}">{7}</td>
+    <td class="level l{8}">{9}</td>
+    <td>{10}</td>
 </tr>
 '''
 
 removebtn = '<button class="remove-button">X</button>'
 
 def expand_level(level):
-    # TODO allow update
-    return "|" * level
+    return "|" * level if level else "-"
 
 def one_row(lang, edit=False):
+    if edit:
+        pass # TODO return something completely different
+
     return rowfmt.format(lang[0], 
                          lang[1],
-                         expand_level(lang[2]),
-                         expand_level(lang[3]),
-                         expand_level(lang[4]),
-                         expand_level(lang[5]),
-                         removebtn if edit else "")
+                         lang[2], expand_level(lang[2]),
+                         lang[3], expand_level(lang[3]),
+                         lang[4], expand_level(lang[4]),
+                         lang[5], expand_level(lang[5]), "")
+                         #removebtn if edit else "")
 
 
 optfmt = '<option value=\"%s\">%s</option>'

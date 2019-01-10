@@ -7,7 +7,9 @@ import MySQLdb
 config_file = "/home/gunicorn/.my.cnf"
 
 def user_langs(user):
-    sql = '''select languages.id, languages.name, whospeakswhat.level
+    sql = '''select languages.id, languages.name, whospeakswhat.speaking,
+                    whospeakswhat.listening, whospeakswhat.reading,
+                    whospeakswhat.writing
              from languages join whospeakswhat 
                  on whospeakswhat.language = languages.id
              where (whospeakswhat.user = %s) order by languages.name'''

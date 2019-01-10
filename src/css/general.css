@@ -60,16 +60,17 @@ table + a {
 }
 
 .language {
-    padding: 0.1em 10.25em 0.1em 0.25em;
+    font-family: Arial;
+    font-weight: bold;
+    font-size: 29px;
     color: black;
-    width: 100%;
+    padding: 0.1em 1em 0.1em 0.25em;
 }
 
 .level {
     font-family: Arial;
     font-weight: bold;
     font-size: 34px;
-    color: purple;
     padding: 0.1em 0.25em 0.1em 0.25em;
 }
 
