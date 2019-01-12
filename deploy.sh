@@ -1,6 +1,6 @@
 #! /bin/bash
 
-sitelogin=gunicorn@94.237.86.122
+sitelogin=gunicorn@talktomein.com
 
 basedir="$(dirname $(readlink -f "$0"))"
 
