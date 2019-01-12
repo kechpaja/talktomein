@@ -10,14 +10,7 @@ Add section to login emails explaining that user can delete their account if
 they need to. Unsubscribe link would be a good idea. 
 
 
-
-For security, consider adding user agent information to signed session token.
-
-
 Create endpoint for starting the login flow.
-
-
-Create dedicated methods for the different login/auth links
 
 
 Perhaps use JS filter to allow for an autocompleting list of languages?
@@ -35,8 +28,7 @@ could stand to be updated. Do some actual research, and determine what their
 native names are.
 
 
-
-Figure out how to get SQL to reject invalid levels and language names?
-
 Switch from itsdangerous back to regular database of tokens for auth (possibly
 using Redis?)
+
+Turn on encryption in MariaDB (more info in migrate-to-upcloud file)
