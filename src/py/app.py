@@ -6,7 +6,6 @@ import falcon
 import json
 import re
 import time
-from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 from urllib.parse import unquote
 
 from . import db
@@ -33,7 +32,7 @@ class HomeResource(object):
         if "username" in data and data["username"]:
             username = data["username"]
             address = db.get_user_email(username)
-            token = login_signer.dumps(username)
+            token = add_token("logins", username)
             if address:
                 send.link(address, 
                           "Login Link",
@@ -135,7 +134,7 @@ class DeleteAccountResource(object):
                       "Delete Account Link",
                       "Click the link to permanently delete your account",
                       "/account/delete/finish",
-                      delete_signer.dumps(user))
+                      db.add_token("deletions", user))
             req.context["user"] = "" # Log user out
             resp.body = pages.message.deletion_link_sent(user)
             resp.content_type = "text/html; charset=utf-8"
@@ -156,8 +155,8 @@ class FinishDeleteAccountResource(object):
     def on_get(self, req, resp):
         if "user" not in req.context or not req.context["user"]:
             try:
-                db.delete_user(delete_signer.loads(req.params["token"],
-                                                   max_age=600))
+                db.delete_user(db.get_user_token("deletions",
+                                                 req.params["token"]))
                 resp.body = pages.message.account_deleted()
             except (BadSignature, SignatureExpired, KeyError):
                 raise falcon.HTTPMovedPermanently("/")
@@ -175,7 +174,7 @@ class LogoutResource(object):
 class FinishLoginResource(object):
     def on_get(self, req, resp, token):
         try:
-            req.context["user"] = login_signer.loads(token, max_age=600)
+            req.context["user"] = db.get_token_user("logins", token)
         except (BadSignature, SignatureExpired):
             pass # TODO log security red flags
         raise falcon.HTTPMovedPermanently("/")
@@ -204,15 +203,7 @@ class UpdateAccountResource(object):
         resp.content_type = "application/json; charset=utf-8"
 
 
-# Get the signing secret and create signers
-with open("/home/gunicorn/signing_secret", "rb") as f:
-    secret = f.read()
-
-login_signer = URLSafeTimedSerializer(secret, salt="login")
-create_signer = URLSafeTimedSerializer(secret, salt="create")
-delete_signer = URLSafeTimedSerializer(secret, salt="delete")
-
-app = falcon.API(middleware=[SessionMiddleware(secret)])
+app = falcon.API(middleware=[SessionMiddleware()])
 
 app.add_route("/account", AccountResource())
 app.add_route("/account/create", CreateAccountResource())

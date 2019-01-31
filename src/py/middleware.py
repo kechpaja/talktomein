@@ -2,41 +2,35 @@
 # Middleware for Session Management                                            #
 ################################################################################
 
-import re
-from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
-
 from . import db
 
 cookiename = "talktomein-session"
 
 class SessionMiddleware(object):
-    def __init__(self, secret):
-        self.session_signer = URLSafeTimedSerializer(secret, salt="session")
-
     def process_request(self, req, resp):
-        try:
-            req.context["user"] = self.session_signer.loads(
-                req.cookies[cookiename],
-                max_age=21600
-            )
-        except BadSignature:
-            pass # TODO again,red flag
-        except (SignatureExpired, KeyError):
-            pass # TODO msg page?
+        user = db.get_token_user("sessions", req.cookies[cookiename])
+        if user:
+            req.context["user"] = user
+        # TODO message page if session is expired or not present?
 
     def process_response(self, req, resp, resource, req_succeeded):
         if "user" in req.context and req.context["user"]:
-            # TODO check if cookie exists and is for current user?
-            # TODO perhaps require user to log out before they can log in again. 
+            cookies = req.cookies
+            user = req.context["user"]
+            if cookiename in cookies and cookies[cookiename]
+                and user != db.get_token_user("sessions", cookies[cookiename]):
+                    db.end_session(cookies[cookiename])
             resp.set_cookie(cookiename,
-                            self.session_signer.dumps(req.context["user"]),
+                            db.add_token("sessions", req.context["user"]),
                             domain="talktomein.com",
                             path="/",
-                            max_age=21600, # XXX 6 hours
+                            max_age=21600,
                             http_only=False)
+
         else:
             cookies = req.cookies
             if cookiename in cookies and cookies[cookiename]:
+                db.end_session(cookies[cookiename])
                 resp.set_cookie(cookiename,
                                 "",
                                 domain="talktomein.com",

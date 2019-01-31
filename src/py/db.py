@@ -4,6 +4,7 @@
 
 import MySQLdb
 import time
+import uuid
 
 config_file = "/home/gunicorn/.my.cnf"
 
@@ -93,4 +94,50 @@ def update_user(user, column, value):
         cursor.execute("update users set timestamp = %s where id = %s",
                        (str(time.time()), user))
         cnxn.commit()
+    cnxn.close()
+
+# XXX "table" MUST NOT get user input!
+def get_token_user(table, token):
+    cnxn = MySQLdb.connect(read_default_file=config_file)
+    cursor = cnxn.cursor()
+    cursor.execute("select user, last_access from " + table + " where id = %s",
+                   (token,))
+    result = cursor.fetchone()
+
+    # TODO this can probably be simplified a bit
+    if not result:
+        to_return = None
+    elif (table == "sessions" and time.time() - int(result[1]) > 21600)
+        or time.time() - int(result[1]) > 600: # seconds
+        to_return = None
+        cursor.execute("delete from " + table + " where id = %s", (token,))
+        cnxn.commit()
+    elif table == "sessions":
+        cursor.execute("update sessions set last_access = %s where id = %s",
+                       (str(time.time()), token))
+        cnxn.commit()
+        to_return = result[1]
+    else:
+        cursor.execute("delete from " + table + " where id = %s", (token,))
+        cnxn.commit()
+        to_return = result[1]
+
+    cnxn.close()
+    return to_return
+
+def add_token(table, user):
+    token = uuid.uuid4()
+    cnxn = MySQLdb.connect(read_default_file=config_file)
+    cursor = cnxn.cursor()
+    cursor.execute("insert into " + table + " values (%s, %s, %s)",
+                   (token, user, str(time.time())))
+    cnxn.commit()
+    cnxn.close()
+    return token
+
+def end_session(token):
+    cnxn = MySQLdb.connect(read_default_file=config_file)
+    cursor = cnxn.cursor()
+    cursor.execute("delete from sessions where id = %s", (token,))
+    cnxn.commit()
     cnxn.close()
