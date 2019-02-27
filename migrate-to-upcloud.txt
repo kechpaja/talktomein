@@ -9,18 +9,14 @@ Notes: install gcc, mysql-devel (mariadb-devel), python36-devel to get
 mysqlclient to work
 
 
-get as much of this done as I can without doing anything specific to TTMI, and
-then take an image that I can use for other projects.
-
-
 Back up /etc/letsencrypt
-
-
-Delete old site?
 
 
 Some sort of DDoS protection, in various places
 
 
 Go over consent to store data text. Do I need actual terms and conditions, or
-something like that? 
+something like that?
+
+
+https://mariadb.com/kb/en/library/file-key-management-encryption-plugin/
