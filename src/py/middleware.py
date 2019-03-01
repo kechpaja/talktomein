@@ -8,20 +8,24 @@ cookiename = "talktomein-session"
 
 class SessionMiddleware(object):
     def process_request(self, req, resp):
-        user = db.get_token_user("sessions", req.cookies[cookiename])
-        if user:
-            req.context["user"] = user
+        cookies = req.cookies
+        if cookiename in cookies and cookies[cookiename]:
+            user = db.get_token_user("sessions", cookies[cookiename])
+            if user:
+                req.context["user"] = user
         # TODO message page if session is expired or not present?
 
     def process_response(self, req, resp, resource, req_succeeded):
         if "user" in req.context and req.context["user"]:
             cookies = req.cookies
             user = req.context["user"]
-            if cookiename in cookies and cookies[cookiename]
+            if cookiename in cookies and cookies[cookiename] \
                 and user != db.get_token_user("sessions", cookies[cookiename]):
                     db.end_session(cookies[cookiename])
+
+            # TODO only do this if the user doesn't already have a session
             resp.set_cookie(cookiename,
-                            db.add_token("sessions", req.context["user"]),
+                            str(db.add_token("sessions", req.context["user"])),
                             domain="talktomein.com",
                             path="/",
                             max_age=21600,

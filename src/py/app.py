@@ -32,12 +32,12 @@ class HomeResource(object):
         if "username" in data and data["username"]:
             username = data["username"]
             address = db.get_user_email(username)
-            token = add_token("logins", username)
+            token = db.add_token("logins", username)
             if address:
                 send.link(address, 
                           "Login Link",
                           "Click the link to log in",
-                          "/account/login/finish/" + token,
+                          "/account/login/finish/" + str(token),
                           "")
                 resp.body = pages.message.login_link_sent(username) 
             else:
@@ -71,6 +71,7 @@ class CreateAccountResource(object):
         data = dict(tuple(f.split("=")) for f in reqbody.split("&"))
         required_fields = ["username", "email", "permission"]
         #if all(k in data.keys() for k in required_fields):
+        # TODO get rid of itsdengerous references in here
         if False: # XXX block new accounts until we're ready to be public
             username = data["username"]
             email = unquote(data["email"])
@@ -134,7 +135,7 @@ class DeleteAccountResource(object):
                       "Delete Account Link",
                       "Click the link to permanently delete your account",
                       "/account/delete/finish",
-                      db.add_token("deletions", user))
+                      str(db.add_token("deletions", user)))
             req.context["user"] = "" # Log user out
             resp.body = pages.message.deletion_link_sent(user)
             resp.content_type = "text/html; charset=utf-8"
@@ -173,10 +174,8 @@ class LogoutResource(object):
 
 class FinishLoginResource(object):
     def on_get(self, req, resp, token):
-        try:
-            req.context["user"] = db.get_token_user("logins", token)
-        except (BadSignature, SignatureExpired):
-            pass # TODO log security red flags
+        req.context["user"] = db.get_token_user("logins", token)
+        # TODO log security red flags, or at least display to user
         raise falcon.HTTPMovedPermanently("/")
 
 

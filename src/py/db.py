@@ -107,8 +107,8 @@ def get_token_user(table, token):
     # TODO this can probably be simplified a bit
     if not result:
         to_return = None
-    elif (table == "sessions" and time.time() - int(result[1]) > 21600)
-        or time.time() - int(result[1]) > 600: # seconds
+    elif (table == "sessions" and (time.time() - float(result[1])) > 21600) \
+            or time.time() - float(result[1]) > 600: # seconds
         to_return = None
         cursor.execute("delete from " + table + " where id = %s", (token,))
         cnxn.commit()
@@ -116,11 +116,11 @@ def get_token_user(table, token):
         cursor.execute("update sessions set last_access = %s where id = %s",
                        (str(time.time()), token))
         cnxn.commit()
-        to_return = result[1]
+        to_return = result[0]
     else:
         cursor.execute("delete from " + table + " where id = %s", (token,))
         cnxn.commit()
-        to_return = result[1]
+        to_return = result[0]
 
     cnxn.close()
     return to_return
