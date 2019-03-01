@@ -51,12 +51,14 @@ class HomeResource(object):
 class FinishCreateAccountResource(object):
     def on_get(self, req, resp):
         try:
+            # TODO Do this without the ItsDengerous stuff
+            # TODO we may just need to take this endpoint out entirely. 
             data = create_signer.loads(req.params["token"])
             db.add_user(**data)
             req.context["user"] = data["username"]
             resp.body = pages.message.account_activated()
             resp.content_type = "text/html; charset=utf-8"
-        except (BadSignature, SignatureExpired, KeyError):
+        except KeyError:
             # TODO log secutiry issues
             falcon.HTTPMovedPermanently("/") # TODO redirect to error page
 
@@ -159,7 +161,7 @@ class FinishDeleteAccountResource(object):
                 db.delete_user(db.get_user_token("deletions",
                                                  req.params["token"]))
                 resp.body = pages.message.account_deleted()
-            except (BadSignature, SignatureExpired, KeyError):
+            except KeyError:
                 raise falcon.HTTPMovedPermanently("/")
         else:
             resp.body = pages.message.cannot_delete_when_logged_in()
