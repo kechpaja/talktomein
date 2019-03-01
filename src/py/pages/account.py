@@ -61,7 +61,7 @@ addfmt = '''
     <p><input type="checkbox" name="permission" value="true" required>%s</p>
     <p><input type="checkbox" name="marketing" value="true">%s</p>
     <button type="submit">Create Account</button>
-</form>'
+</form>
 '''
 
 failmsgfmt = '<p class="failmsg">%s</p>'
