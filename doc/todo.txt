@@ -28,12 +28,6 @@ could stand to be updated. Do some actual research, and determine what their
 native names are.
 
 
-Switch from itsdangerous back to regular database of tokens for auth (possibly
-using Redis?)
-
-Turn on encryption in MariaDB (more info in migrate-to-upcloud file)
-
-
 Add a "logout of all sessions" button
 
 
