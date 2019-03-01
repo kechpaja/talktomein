@@ -21,11 +21,15 @@ class SessionMiddleware(object):
             user = req.context["user"]
             if cookiename in cookies and cookies[cookiename] \
                 and user != db.get_token_user("sessions", cookies[cookiename]):
-                    db.end_session(cookies[cookiename])
+                db.end_session(cookies[cookiename])
+                token = str(db.add_token("sessions", req.context["user"]))
+            elif cookiename in cookies and cookies[cookiename]:
+                token = cookies[cookiename]
+            else:
+                token = str(db.add_token("sessions", req.context["user"]))
 
-            # TODO only do this if the user doesn't already have a session
             resp.set_cookie(cookiename,
-                            str(db.add_token("sessions", req.context["user"])),
+                            token,
                             domain="talktomein.com",
                             path="/",
                             max_age=21600,
